@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Produk — Dapur Tradisional Ibu Enuy</title>
+<style>
+  :root {
+    --brown: #6b3a2a;
+    --brown-dk: #4a2419;
+    --cream: #fdf6ec;
+    --gold: #d4a843;
+    --green: #16a34a;
+    --red: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    background: linear-gradient(160deg, #f5e9d5 0%, #fdf6ec 60%, #ffe8b0 100%);
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  }
+  h1 { color: var(--brown-dk); font-size: 1.3rem; margin: 0 0 4px; }
+  p.hint { color: #6b7280; font-size: 0.85rem; margin: 0 0 20px; }
+  label { display: block; font-weight: 600; color: var(--brown-dk); margin: 16px 0 6px; font-size: 0.9rem; }
+  input[type="password"], input[type="file"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #e5d4b8;
+    border-radius: 10px;
+    font-size: 0.95rem;
+  }
+  button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: var(--brown);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  button:disabled { opacity: 0.6; cursor: not-allowed; }
+  button:hover:not(:disabled) { background: var(--brown-dk); }
+  #result {
+    margin-top: 18px;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    padding: 12px;
+    border-radius: 10px;
+    display: none;
+  }
+  #result.ok { display: block; background: #e9f9ee; color: var(--green); }
+  #result.err { display: block; background: #fdeaea; color: var(--red); }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.8rem; }
+  th, td { text-align: left; padding: 4px 6px; border-bottom: 1px solid #eee; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Update Data Produk</h1>
+    <p class="hint">
+      Unggah file CSV atau Excel (.xlsx) berisi kolom: <b>id</b> (opsional), <b>name</b>, <b>price</b>,
+      <b>desc</b>, <b>img</b>, <b>status</b> (ready/preorder), <b>statusLabel</b>. Produk dengan id yang
+      sama akan diperbarui, id baru akan ditambahkan otomatis.
+    </p>
+
+    <label for="token">Token Admin</label>
+    <input type="password" id="token" placeholder="Masukkan token admin" autocomplete="off" />
+
+    <label for="file">File CSV / Excel</label>
+    <input type="file" id="file" accept=".csv,.xlsx,.xls" />
+
+    <button id="uploadBtn">Update Produk</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const btn = document.getElementById("uploadBtn");
+    const resultEl = document.getElementById("result");
+
+    btn.addEventListener("click", async () => {
+      const token = document.getElementById("token").value.trim();
+      const fileInput = document.getElementById("file");
+      const file = fileInput.files[0];
+
+      resultEl.className = "";
+      resultEl.style.display = "none";
+
+      if (!token) {
+        showResult(false, "Token admin wajib diisi.");
+        return;
+      }
+      if (!file) {
+        showResult(false, "Pilih file CSV/Excel terlebih dahulu.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      btn.disabled = true;
+      btn.textContent = "Mengunggah...";
+
+      try {
+        const res = await fetch("/api/admin/import-products", {
+          method: "POST",
+          headers: { "x-admin-token": token },
+          body: formData,
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showResult(false, data.error || "Gagal mengupdate produk.");
+        } else {
+          let msg = `✅ ${data.updated} produk berhasil diperbarui.`;
+          if (data.skipped && data.skipped.length) {
+            msg += `\n\n⚠️ ${data.skipped.length} baris dilewati:\n`;
+            msg += data.skipped.map((s) => `Baris ${s.row}: ${s.reason}`).join("\n");
+          }
+          showResult(true, msg);
+        }
+      } catch (err) {
+        showResult(false, "Terjadi kesalahan koneksi: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Update Produk";
+      }
+    });
+
+    function showResult(ok, message) {
+      resultEl.className = ok ? "ok" : "err";
+      resultEl.textContent = message;
+      resultEl.style.display = "block";
+    }
+  </script>
+</body>
+</html>
