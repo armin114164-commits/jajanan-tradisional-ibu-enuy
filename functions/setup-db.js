@@ -12,7 +12,7 @@ exports.handler = async function (event) {
   }
 
   try {
-    const db = getDatabase();
+    const db = getDatabase({ connectionString: process.env.NETLIFY_DB_URL });
 
     await db.sql`
       INSERT INTO products (id, name, price, description, img, status, status_label, sort_order)

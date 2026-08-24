@@ -10,7 +10,7 @@ exports.handler = async function (event) {
   }
 
   try {
-    const db = getDatabase();
+    const db = getDatabase({ connectionString: process.env.NETLIFY_DB_URL });
     const result = await db.sql`
       SELECT
         id,

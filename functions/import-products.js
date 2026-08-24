@@ -148,7 +148,7 @@ exports.handler = async function (event) {
 
   // UPSERT ke DB
   try {
-    const db = getDatabase();
+    const db = getDatabase({ connectionString: process.env.NETLIFY_DB_URL });
     const countResult = await db.sql`SELECT COUNT(*) AS count FROM products`;
     let sortBase = Number(countResult.rows[0].count);
 
