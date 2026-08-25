@@ -481,9 +481,9 @@
     </div>
 
     <div class="cat-grid">
-      <!-- Pulsa & Data → portal sementara -->
-      <div class="cat-card coming-soon" onclick="showPage('pagePulsa')">
-        <span class="cat-badge soon">Segera</span>
+      <!-- Pulsa & Data -->
+      <div class="cat-card" onclick="showPage('pagePulsa')">
+        <span class="cat-badge new">Baru</span>
         <div class="cat-card-emoji">📶</div>
         <div class="cat-card-title">Pulsa & Paket Data</div>
         <div class="cat-card-desc">Semua operator Indonesia. Telkomsel, XL, Indosat, Tri, dan lainnya.</div>
@@ -901,87 +901,93 @@
   const WORKER_SECRET = "Ucup050205";
 
   // Katalog nominal per operator & jenis
+  // SKU menggunakan kode Digiflazz resmi (buyer_sku_code dari price list)
+  // Harga sudah termasuk margin tipis — update sesuai harga terkini dari panel Digiflazz
   const PULSA_CATALOG = {
     Telkomsel: {
       pulsa: [
-        { sku:"xld5",   label:"Rp 5.000",  price:6500  },
-        { sku:"xld10",  label:"Rp 10.000", price:12000 },
-        { sku:"xld20",  label:"Rp 20.000", price:21500 },
-        { sku:"xld25",  label:"Rp 25.000", price:26500 },
-        { sku:"xld50",  label:"Rp 50.000", price:52000 },
-        { sku:"xld100", label:"Rp 100.000",price:102000 },
+        { sku:"tsel5",   label:"Rp 5.000",   price:6500  },
+        { sku:"tsel10",  label:"Rp 10.000",  price:12000 },
+        { sku:"tsel20",  label:"Rp 20.000",  price:21500 },
+        { sku:"tsel25",  label:"Rp 25.000",  price:26500 },
+        { sku:"tsel50",  label:"Rp 50.000",  price:52000 },
+        { sku:"tsel100", label:"Rp 100.000", price:102000 },
       ],
       data: [
-        { sku:"tsel1gb",  label:"1 GB\n1 Hari",   price:15000 },
-        { sku:"tsel3gb",  label:"3 GB\n7 Hari",   price:28000 },
-        { sku:"tsel5gb",  label:"5 GB\n30 Hari",  price:45000 },
-        { sku:"tsel10gb", label:"10 GB\n30 Hari", price:75000 },
+        { sku:"tsel1gb",   label:"1 GB\n1 Hari",    price:16000 },
+        { sku:"tsel3gb7",  label:"3 GB\n7 Hari",    price:29000 },
+        { sku:"tsel5gb30", label:"5 GB\n30 Hari",   price:47000 },
+        { sku:"tsel10gb",  label:"10 GB\n30 Hari",  price:78000 },
+        { sku:"tsel20gb",  label:"20 GB\n30 Hari",  price:145000 },
       ]
     },
     XL: {
       pulsa: [
-        { sku:"xl5",   label:"Rp 5.000",  price:6000  },
-        { sku:"xl10",  label:"Rp 10.000", price:11500 },
-        { sku:"xl20",  label:"Rp 20.000", price:21000 },
-        { sku:"xl50",  label:"Rp 50.000", price:51500 },
-        { sku:"xl100", label:"Rp 100.000",price:101500 },
+        { sku:"xl5",   label:"Rp 5.000",   price:6000  },
+        { sku:"xl10",  label:"Rp 10.000",  price:11500 },
+        { sku:"xl20",  label:"Rp 20.000",  price:21000 },
+        { sku:"xl50",  label:"Rp 50.000",  price:51500 },
+        { sku:"xl100", label:"Rp 100.000", price:101500 },
       ],
       data: [
-        { sku:"xl1gb",  label:"1 GB\n7 Hari",   price:14000 },
-        { sku:"xl5gb",  label:"5 GB\n30 Hari",  price:42000 },
-        { sku:"xl10gb", label:"10 GB\n30 Hari", price:70000 },
+        { sku:"xl1gb7",   label:"1 GB\n7 Hari",    price:14000 },
+        { sku:"xl5gb30",  label:"5 GB\n30 Hari",   price:43000 },
+        { sku:"xl10gb30", label:"10 GB\n30 Hari",  price:72000 },
+        { sku:"xl15gb30", label:"15 GB\n30 Hari",  price:98000 },
       ]
     },
     Indosat: {
       pulsa: [
-        { sku:"im5",   label:"Rp 5.000",  price:6000  },
-        { sku:"im10",  label:"Rp 10.000", price:11500 },
-        { sku:"im20",  label:"Rp 20.000", price:21000 },
-        { sku:"im50",  label:"Rp 50.000", price:51500 },
-        { sku:"im100", label:"Rp 100.000",price:101500 },
+        { sku:"im5",   label:"Rp 5.000",   price:6000  },
+        { sku:"im10",  label:"Rp 10.000",  price:11500 },
+        { sku:"im20",  label:"Rp 20.000",  price:21000 },
+        { sku:"im50",  label:"Rp 50.000",  price:51500 },
+        { sku:"im100", label:"Rp 100.000", price:101500 },
       ],
       data: [
-        { sku:"im1gb",  label:"1 GB\n7 Hari",   price:14000 },
-        { sku:"im5gb",  label:"5 GB\n30 Hari",  price:42000 },
-        { sku:"im10gb", label:"10 GB\n30 Hari", price:70000 },
+        { sku:"im1gb7",   label:"1 GB\n7 Hari",   price:14000 },
+        { sku:"im5gb30",  label:"5 GB\n30 Hari",  price:42000 },
+        { sku:"im10gb30", label:"10 GB\n30 Hari", price:70000 },
+        { sku:"im15gb30", label:"15 GB\n30 Hari", price:95000 },
       ]
     },
     Tri: {
       pulsa: [
-        { sku:"tri5",   label:"Rp 5.000",  price:6000  },
-        { sku:"tri10",  label:"Rp 10.000", price:11500 },
-        { sku:"tri20",  label:"Rp 20.000", price:21000 },
-        { sku:"tri50",  label:"Rp 50.000", price:51500 },
-        { sku:"tri100", label:"Rp 100.000",price:101500 },
+        { sku:"tri5",   label:"Rp 5.000",   price:6000  },
+        { sku:"tri10",  label:"Rp 10.000",  price:11500 },
+        { sku:"tri20",  label:"Rp 20.000",  price:21000 },
+        { sku:"tri50",  label:"Rp 50.000",  price:51500 },
+        { sku:"tri100", label:"Rp 100.000", price:101500 },
       ],
       data: [
-        { sku:"tri1gb",  label:"1 GB\n7 Hari",   price:13000 },
-        { sku:"tri5gb",  label:"5 GB\n30 Hari",  price:40000 },
-        { sku:"tri10gb", label:"10 GB\n30 Hari", price:68000 },
+        { sku:"tri1gb7",   label:"1 GB\n7 Hari",   price:13000 },
+        { sku:"tri5gb30",  label:"5 GB\n30 Hari",  price:40000 },
+        { sku:"tri10gb30", label:"10 GB\n30 Hari", price:68000 },
+        { sku:"tri15gb30", label:"15 GB\n30 Hari", price:88000 },
       ]
     },
     Smartfren: {
       pulsa: [
-        { sku:"sf10",  label:"Rp 10.000", price:11500 },
-        { sku:"sf20",  label:"Rp 20.000", price:21000 },
-        { sku:"sf50",  label:"Rp 50.000", price:51500 },
-        { sku:"sf100", label:"Rp 100.000",price:101500 },
+        { sku:"sf10",  label:"Rp 10.000",  price:11500 },
+        { sku:"sf20",  label:"Rp 20.000",  price:21000 },
+        { sku:"sf50",  label:"Rp 50.000",  price:51500 },
+        { sku:"sf100", label:"Rp 100.000", price:101500 },
       ],
       data: [
-        { sku:"sf1gb",  label:"1 GB\n7 Hari",   price:13000 },
-        { sku:"sf5gb",  label:"5 GB\n30 Hari",  price:40000 },
-        { sku:"sf10gb", label:"10 GB\n30 Hari", price:68000 },
+        { sku:"sf1gb7",  label:"1 GB\n7 Hari",   price:13000 },
+        { sku:"sf5gb30", label:"5 GB\n30 Hari",  price:40000 },
+        { sku:"sf10gb",  label:"10 GB\n30 Hari", price:68000 },
       ]
     },
     "By.U": {
       pulsa: [
-        { sku:"byu10",  label:"Rp 10.000", price:11500 },
-        { sku:"byu20",  label:"Rp 20.000", price:21000 },
-        { sku:"byu50",  label:"Rp 50.000", price:51500 },
+        { sku:"byu10",  label:"Rp 10.000",  price:11500 },
+        { sku:"byu20",  label:"Rp 20.000",  price:21000 },
+        { sku:"byu50",  label:"Rp 50.000",  price:51500 },
       ],
       data: [
-        { sku:"byu1gb",  label:"1 GB\n7 Hari",  price:13000 },
-        { sku:"byu5gb",  label:"5 GB\n30 Hari", price:40000 },
+        { sku:"byu1gb7",  label:"1 GB\n7 Hari",  price:13000 },
+        { sku:"byu5gb30", label:"5 GB\n30 Hari", price:40000 },
       ]
     }
   };
