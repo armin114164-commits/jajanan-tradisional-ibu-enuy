@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#f5e9d5"/>
+  <text x="200" y="130" font-family="system-ui,sans-serif" font-size="52" text-anchor="middle">🍪</text>
+  <text x="200" y="185" font-family="system-ui,sans-serif" font-size="22" font-weight="bold" fill="#6b3a2a" text-anchor="middle">Burayot</text>
+  <text x="200" y="215" font-family="system-ui,sans-serif" font-size="14" fill="#a0522d" text-anchor="middle">Foto segera hadir</text>
+</svg>
