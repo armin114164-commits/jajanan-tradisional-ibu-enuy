@@ -1025,11 +1025,11 @@
     <h2 style="font-size:1.5rem;margin-bottom:4px;">Enuy E-Commerce</h2>
     <p class="sub">Pilih kategori produk yang kamu inginkan</p>
     <div class="category-grid">
-      <div class="cat-card" id="catOlehOleh">
+      <a class="cat-card" href="/oleh-oleh" style="text-decoration:none;">
         <div class="cat-icon">🍬</div>
         <div class="cat-name">Oleh-Oleh Garut</div>
         <div class="cat-desc">Jajanan tradisional khas Garut, resep turun-temurun</div>
-      </div>
+      </a>
       <a class="cat-card" id="catDigital" href="/digital.html" style="text-decoration:none;">
         <div class="cat-icon">⚡</div>
         <div class="cat-name">Digital</div>
@@ -1763,11 +1763,7 @@ document.getElementById("backToCatalogBtn").addEventListener("click", () => {
 document.getElementById("goShopBtn").addEventListener("click", () => {
   showPage("pageCatalog");
 });
-// Kartu kategori
-document.getElementById("catOlehOleh").addEventListener("click", () => {
-  showPage("pageCatalog");
-});
-// catDigital sudah jadi <a href="/digital.html"> di HTML, tidak perlu JS handler
+// Semua kartu kategori sudah pakai <a href="..."> di HTML, tidak perlu JS handler
 document.getElementById("backToCartBtn").addEventListener("click", () => {
   renderCart();
   showPage("pageCart");
