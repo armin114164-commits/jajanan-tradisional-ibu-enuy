@@ -572,7 +572,7 @@
     uploadBtn.textContent = "Mengunggah...";
 
     try {
-      const res  = await fetch("/api/admin/import-products", {
+      const res  = await fetch("/api/import-products", {
         method: "POST",
         headers: { "x-admin-token": token },
         body: formData,
@@ -609,7 +609,7 @@
     const token = adminToken;
 
     try {
-      const res  = await fetch("/api/product-action", {
+      const res  = await fetch("/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-admin-token": token },
         body: JSON.stringify({ action: "delete", id }),
@@ -662,7 +662,7 @@
     saveBtn.textContent = "Menyimpan...";
 
     try {
-      const res  = await fetch("/api/product-action", {
+      const res  = await fetch("/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-admin-token": token },
         body: JSON.stringify({ action: "update", id, name, price, desc, img, status, statusLabel, stock: isNaN(stock) ? -1 : stock }),
@@ -752,7 +752,7 @@
   async function confirmOrder(orderId) {
     if (!confirm(`Konfirmasi pembayaran Pesanan #${orderId}? Stok akan otomatis berkurang.`)) return;
     try {
-      const res  = await fetch("/api/order-action", {
+      const res  = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-admin-token": adminToken },
         body: JSON.stringify({ action: "confirm", orderId })
@@ -767,7 +767,7 @@
   async function cancelOrder(orderId) {
     if (!confirm(`Batalkan Pesanan #${orderId}?`)) return;
     try {
-      const res  = await fetch("/api/order-action", {
+      const res  = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-admin-token": adminToken },
         body: JSON.stringify({ action: "cancel", orderId })

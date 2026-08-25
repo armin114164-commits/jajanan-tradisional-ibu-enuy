@@ -60,6 +60,9 @@ export default async function handler(req, res) {
         customer_wa       TEXT        NOT NULL,
         target_number     TEXT        NOT NULL,
         sku               TEXT        NOT NULL,
+        game              TEXT        NOT NULL DEFAULT '',
+        item_name         TEXT        NOT NULL DEFAULT '',
+        provider          TEXT        NOT NULL DEFAULT 'digiflazz',
         price             INTEGER     NOT NULL DEFAULT 0,
         notes             TEXT        NOT NULL DEFAULT '',
         status            TEXT        NOT NULL DEFAULT 'pending',
@@ -71,6 +74,11 @@ export default async function handler(req, res) {
         updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `;
+
+    // Tambah kolom baru ke digital_orders jika belum ada (untuk DB lama)
+    await sql`ALTER TABLE digital_orders ADD COLUMN IF NOT EXISTS game      TEXT NOT NULL DEFAULT ''`;
+    await sql`ALTER TABLE digital_orders ADD COLUMN IF NOT EXISTS item_name TEXT NOT NULL DEFAULT ''`;
+    await sql`ALTER TABLE digital_orders ADD COLUMN IF NOT EXISTS provider  TEXT NOT NULL DEFAULT 'digiflazz'`;
 
     // Seed / update data produk
     await sql`
