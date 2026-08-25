@@ -758,12 +758,14 @@
     btn.disabled = true; btn.textContent = "⏳ Memproses...";
 
     try {
-      const res  = await fetch("/api/digiflazz-topup", {
+      const res  = await fetch("/api/game-topup", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          gameId:       currentGame.id,
           customerName: custName, customerWA: custWA,
-          targetNumber: targetFull,
-          sku: selectedProd.sku, price: selectedProd.price,
+          targetNumber, zoneNumber: currentGame.needZone ? zoneNumber : "",
+          sku:   selectedProd.sku,
+          price: selectedProd.price,
           notes: notes || (currentGame.name + " · " + selectedProd.name)
         })
       });
