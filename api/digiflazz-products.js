@@ -48,7 +48,7 @@ export default async function handler(req, res) {
     .digest("hex");
 
   try {
-    const response = await fetch("https://digiflazz-proxy.ncuupp1.workers.dev/price-list", {
+    const response = await fetch("https://proxy.enuyrasa.my.id/price-list", {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify({ cmd: "prepaid", username, sign })
