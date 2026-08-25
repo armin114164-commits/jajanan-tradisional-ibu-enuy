@@ -56,7 +56,7 @@ export default async function handler(req, res) {
     const sql = neon(process.env.DATABASE_URL);
 
     // ── Kirim transaksi ke Digiflazz ──────────────────────────────
-    const digiRes  = await fetch("https://api.digiflazz.com/v1/transaction", {
+    const digiRes  = await fetch("https://digiflazz-proxy.ncuupp1.workers.dev/transaction", {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify(txBody)

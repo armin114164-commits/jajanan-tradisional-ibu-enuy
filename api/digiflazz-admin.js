@@ -43,7 +43,7 @@ export default async function handler(req, res) {
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, buyer_sku_code: "xld10", customer_no: "087800001232", ref_id: refId, sign, testing: true })
         }),
-        fetch("https://api.digiflazz.com/v1/price-list", {
+        fetch("https://digiflazz-proxy.ncuupp1.workers.dev/price-list", {
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ cmd: "prepaid", username, sign: signPl })
         })
