@@ -1767,9 +1767,7 @@ document.getElementById("goShopBtn").addEventListener("click", () => {
 document.getElementById("catOlehOleh").addEventListener("click", () => {
   showPage("pageCatalog");
 });
-document.getElementById("catDigital").addEventListener("click", () => {
-  showToast("💻 Kategori Digital segera hadir!");
-});
+// catDigital sudah jadi <a href="/digital.html"> di HTML, tidak perlu JS handler
 document.getElementById("backToCartBtn").addEventListener("click", () => {
   renderCart();
   showPage("pageCart");
