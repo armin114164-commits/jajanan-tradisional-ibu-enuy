@@ -39,22 +39,18 @@ export default async function handler(req, res) {
   }
 
   // ── Verifikasi signature dari Digiflazz ─────────────────────────
-  // Digiflazz mengirim header X-Hub-Signature: sha1=...
-  // Ref: https://developer.digiflazz.com/api/#callback
-  const hubSignature = req.headers["x-hub-signature"] || "";
-  const expectedSign = crypto.createHash("md5")
-    .update(username + prodApiKey + "callback")
-    .digest("hex");
+  // Digiflazz mengirim header X-Hub-Signature: sha1=HMAC_SHA1(secret, body)
+  // Secret = nilai yang kamu isi di field "Secret" di dashboard Digiflazz
+  const webhookSecret = process.env.DIGIFLAZZ_WEBHOOK_SECRET || prodApiKey;
+  const hubSignature  = req.headers["x-hub-signature"] || "";
 
-  // Validasi body signature jika header tersedia
   if (hubSignature) {
     const provided = hubSignature.replace(/^sha1=/, "");
-    // Digiflazz menggunakan HMAC-SHA1 dengan secret = prodApiKey
-    const hmac = crypto.createHmac("sha1", prodApiKey)
+    const hmac     = crypto.createHmac("sha1", webhookSecret)
       .update(JSON.stringify(req.body))
       .digest("hex");
     if (hmac !== provided) {
-      console.warn("[webhook] Signature tidak cocok. Mungkin bukan dari Digiflazz.");
+      console.warn("[webhook] Signature tidak cocok:", { provided, hmac });
       return res.status(401).json({ error: "Signature tidak valid." });
     }
   }
