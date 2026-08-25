@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     // ── CEK SALDO ────────────────────────────────────────────────
     if (cmd === "balance") {
       const sign = crypto.createHash("md5").update(username + prodApiKey + "depo").digest("hex");
-      const r    = await fetch("https://proxy.enuyrasa.my.id/cek-saldo", {
+      const r    = await fetch("https://digiflazz-proxy.ncuupp1.workers.dev/cek-saldo", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cmd: "deposit", username, sign })
       });
@@ -39,11 +39,11 @@ export default async function handler(req, res) {
       const sign     = crypto.createHash("md5").update(username + prodApiKey + refId).digest("hex");
       const signPl   = crypto.createHash("md5").update(username + prodApiKey + "pricelist").digest("hex");
       const [txRes, plRes] = await Promise.all([
-        fetch("https://proxy.enuyrasa.my.id/transaction", {
+        fetch("https://digiflazz-proxy.ncuupp1.workers.dev/transaction", {
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, buyer_sku_code: "xld10", customer_no: "087800001232", ref_id: refId, sign, testing: true })
         }),
-        fetch("https://proxy.enuyrasa.my.id/price-list", {
+        fetch("https://digiflazz-proxy.ncuupp1.workers.dev/price-list", {
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ cmd: "prepaid", username, sign: signPl })
         })
