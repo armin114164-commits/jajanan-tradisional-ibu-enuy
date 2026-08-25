@@ -1,13 +1,1 @@
-{
-  "version": 2,
-  "functions": {
-    "api/*.js": { "runtime": "nodejs20.x" }
-  },
-  "routes": [
-    { "src": "/api/admin/import-products", "dest": "/api/import-products" },
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)\\.html", "dest": "/$1.html" },
-    { "src": "/", "dest": "/index.html" },
-    { "src": "/(.*)", "dest": "/$1" }
-  ]
-}
+{}
