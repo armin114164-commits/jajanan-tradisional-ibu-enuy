@@ -512,10 +512,12 @@
 
     <div class="filter-bar" id="gameFilterBar">
       <button class="filter-btn active" data-game="all">Semua</button>
-      <button class="filter-btn" data-game="mobile-legends">Mobile Legends</button>
-      <button class="filter-btn" data-game="free-fire">Free Fire</button>
+      <button class="filter-btn" data-game="mobile legends">Mobile Legends</button>
+      <button class="filter-btn" data-game="free fire">Free Fire</button>
       <button class="filter-btn" data-game="pubg">PUBG Mobile</button>
       <button class="filter-btn" data-game="genshin">Genshin Impact</button>
+      <button class="filter-btn" data-game="honkai">Honkai Star Rail</button>
+      <button class="filter-btn" data-game="valorant">Valorant</button>
     </div>
 
     <div class="search-wrap">
@@ -599,6 +601,45 @@
     if (id === "pageGame" && allGameProducts.length === 0) loadGameProducts();
   }
 
+  // ─── Produk game statis ───────────────────────────────────────
+  const STATIC_GAMES = [
+    // Mobile Legends
+    { sku:"ml-86",   brand:"Mobile Legends", category:"Games", name:"86 Diamonds",    price:20000,  gameId:true },
+    { sku:"ml-172",  brand:"Mobile Legends", category:"Games", name:"172 Diamonds",   price:38000,  gameId:true },
+    { sku:"ml-257",  brand:"Mobile Legends", category:"Games", name:"257 Diamonds",   price:55000,  gameId:true },
+    { sku:"ml-344",  brand:"Mobile Legends", category:"Games", name:"344 Diamonds",   price:73000,  gameId:true },
+    { sku:"ml-514",  brand:"Mobile Legends", category:"Games", name:"514 Diamonds",   price:107000, gameId:true },
+    { sku:"ml-706",  brand:"Mobile Legends", category:"Games", name:"706 Diamonds",   price:145000, gameId:true },
+    { sku:"ml-1412", brand:"Mobile Legends", category:"Games", name:"1.412 Diamonds", price:285000, gameId:true },
+    { sku:"ml-2195", brand:"Mobile Legends", category:"Games", name:"2.195 Diamonds", price:435000, gameId:true },
+    // Free Fire
+    { sku:"ff-70",   brand:"Free Fire", category:"Games", name:"70 Diamond",    price:15000, gameId:true },
+    { sku:"ff-140",  brand:"Free Fire", category:"Games", name:"140 Diamond",   price:28000, gameId:true },
+    { sku:"ff-355",  brand:"Free Fire", category:"Games", name:"355 Diamond",   price:70000, gameId:true },
+    { sku:"ff-720",  brand:"Free Fire", category:"Games", name:"720 Diamond",   price:140000,gameId:true },
+    { sku:"ff-1450", brand:"Free Fire", category:"Games", name:"1.450 Diamond", price:278000,gameId:true },
+    { sku:"ff-2180", brand:"Free Fire", category:"Games", name:"2.180 Diamond", price:415000,gameId:true },
+    // PUBG Mobile
+    { sku:"pubg-60",   brand:"PUBG Mobile", category:"Games", name:"60 UC",    price:15000, gameId:true },
+    { sku:"pubg-120",  brand:"PUBG Mobile", category:"Games", name:"120 UC",   price:28000, gameId:true },
+    { sku:"pubg-325",  brand:"PUBG Mobile", category:"Games", name:"325 UC",   price:73000, gameId:true },
+    { sku:"pubg-660",  brand:"PUBG Mobile", category:"Games", name:"660 UC",   price:145000,gameId:true },
+    { sku:"pubg-1800", brand:"PUBG Mobile", category:"Games", name:"1.800 UC", price:388000,gameId:true },
+    // Genshin Impact
+    { sku:"gi-60",   brand:"Genshin Impact", category:"Games", name:"60 Primogems",    price:15000, gameId:true },
+    { sku:"gi-300",  brand:"Genshin Impact", category:"Games", name:"300 Primogems",   price:73000, gameId:true },
+    { sku:"gi-980",  brand:"Genshin Impact", category:"Games", name:"980 Primogems",   price:235000,gameId:true },
+    { sku:"gi-1980", brand:"Genshin Impact", category:"Games", name:"1.980 Primogems", price:470000,gameId:true },
+    // Honkai Star Rail
+    { sku:"hsr-60",  brand:"Honkai Star Rail", category:"Games", name:"60 Stellar Jade",   price:15000, gameId:true },
+    { sku:"hsr-300", brand:"Honkai Star Rail", category:"Games", name:"300 Stellar Jade",  price:73000, gameId:true },
+    { sku:"hsr-980", brand:"Honkai Star Rail", category:"Games", name:"980 Stellar Jade",  price:235000,gameId:true },
+    // Valorant
+    { sku:"val-420",  brand:"Valorant", category:"Games", name:"420 VP",  price:73000, gameId:true },
+    { sku:"val-1000", brand:"Valorant", category:"Games", name:"1.000 VP", price:168000,gameId:true },
+    { sku:"val-2050", brand:"Valorant", category:"Games", name:"2.050 VP", price:338000,gameId:true },
+  ];
+
   // ─── Format Rupiah ────────────────────────────────────────────
   function fmt(n) { return "Rp " + Number(n).toLocaleString("id-ID"); }
 
@@ -610,31 +651,11 @@
     setTimeout(() => t.classList.remove("show"), dur);
   }
 
-  // ─── Ambil produk game dari API ───────────────────────────────
-  async function loadGameProducts() {
-    const grid  = document.getElementById("gameGrid");
-    const state = document.getElementById("gameState");
-    state.style.display = "block";
-    state.innerHTML     = '<div class="icon">🎮</div><div>Memuat produk game...</div>';
-    grid.innerHTML      = "";
-
-    try {
-      const res = await fetch("/api/digiflazz-products?type=game");
-      if (res.status === 503) {
-        state.innerHTML = '<div class="icon">🔧</div><div>Layanan sedang disiapkan.<br>Hubungi admin untuk top-up.</div>';
-        return;
-      }
-      const data = await res.json();
-      if (!Array.isArray(data) || data.length === 0) {
-        state.innerHTML = '<div class="icon">😅</div><div>Produk game belum tersedia saat ini.</div>';
-        return;
-      }
-      allGameProducts = data;
-      state.style.display = "none";
-      renderGameProducts();
-    } catch (err) {
-      state.innerHTML = '<div class="icon">❌</div><div>Gagal memuat produk. Coba refresh halaman.</div>';
-    }
+  // ─── Load produk game (statis) ────────────────────────────────
+  function loadGameProducts() {
+    allGameProducts = STATIC_GAMES;
+    document.getElementById("gameState").style.display = "none";
+    renderGameProducts();
   }
 
   // ─── Render grid game ─────────────────────────────────────────
@@ -645,8 +666,8 @@
 
     let items = allGameProducts.filter(p => {
       if (activeGame !== "all") {
-        const brandLow = (p.brand || "").toLowerCase().replace(/\s+/g,"-");
-        if (!brandLow.includes(activeGame.replace("-"," ")) && brandLow !== activeGame) return false;
+        const brandLow = (p.brand || "").toLowerCase();
+        if (!brandLow.includes(activeGame)) return false;
       }
       if (q) {
         const hay = (p.name + " " + p.brand + " " + (p.desc||"")).toLowerCase();
