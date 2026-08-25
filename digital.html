@@ -395,6 +395,40 @@
     .result-box .result-title { font-size: 0.92rem; font-weight: 800; margin-bottom: 4px; }
     .result-box .result-detail { font-size: 0.78rem; color: var(--gray); line-height: 1.5; }
 
+    /* ══ OPERATOR / NOMINAL BUTTONS ═════════════════════════════ */
+    .op-btn {
+      padding: 8px 6px;
+      border-radius: 10px;
+      border: 1.5px solid var(--cream-dk);
+      background: var(--white);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--brown-lt);
+      transition: all 0.15s;
+      text-align: center;
+    }
+    .op-btn.active { background: var(--purple); border-color: var(--purple); color: var(--white); }
+    .op-btn:hover:not(.active) { border-color: var(--purple); color: var(--purple); }
+
+    .nominal-btn {
+      padding: 10px 6px;
+      border-radius: 10px;
+      border: 1.5px solid var(--cream-dk);
+      background: var(--white);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--brown);
+      transition: all 0.15s;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .nominal-btn .nom-label { font-size: 0.68rem; color: var(--gray); display: block; }
+    .nominal-btn.active { background: var(--purple); border-color: var(--purple); color: var(--white); }
+    .nominal-btn.active .nom-label { color: rgba(255,255,255,0.8); }
+    .nominal-btn:hover:not(.active) { border-color: var(--purple); }
+
     /* ══ TOAST ══════════════════════════════════════════════════ */
     .toast {
       position: fixed;
@@ -466,7 +500,7 @@
 
   </div><!-- /#pageCat -->
 
-  <!-- ── SUB-HALAMAN PULSA & DATA (portal) ────────────────────── -->
+  <!-- ── SUB-HALAMAN PULSA & DATA ──────────────────────────────── -->
   <div id="pagePulsa" class="subpage">
     <div class="subpage-header">
       <button class="btn-sub-back" onclick="showPage('pageCat')">
@@ -478,23 +512,67 @@
       </div>
     </div>
 
-    <div class="portal-wrap">
-      <div class="portal-icon">🔧</div>
-      <div class="portal-title">Layanan Segera Hadir!</div>
-      <div class="portal-desc">
-        Kami sedang memfinalisasi sistem top-up otomatis pulsa &amp; paket data.<br>
-        Sementara itu, kamu tetap bisa pesan via WhatsApp — admin siap membantu.
+    <!-- Pilih Operator & Nominal -->
+    <div id="pulsaForm">
+      <!-- Operator -->
+      <div style="margin-bottom:16px;">
+        <div style="font-size:0.82rem;font-weight:700;color:var(--brown);margin-bottom:10px;">Pilih Operator</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;" id="operatorGrid">
+          <button class="op-btn active" data-op="Telkomsel">Telkomsel</button>
+          <button class="op-btn" data-op="XL">XL / Axis</button>
+          <button class="op-btn" data-op="Indosat">Indosat</button>
+          <button class="op-btn" data-op="Tri">Tri (3)</button>
+          <button class="op-btn" data-op="Smartfren">Smartfren</button>
+          <button class="op-btn" data-op="By.U">By.U</button>
+        </div>
       </div>
-      <div class="portal-notice">
-        <strong>⚠️ Pemesanan Manual (Sementara)</strong>
-        Kirim pesan ke admin dengan format:<br>
-        <em>Nama · Nomor Tujuan · Nominal · Operator</em><br><br>
-        Contoh: <em>Budi · 0812xxxxx · Pulsa 50rb · Telkomsel</em>
+
+      <!-- Jenis: Pulsa / Paket Data -->
+      <div style="margin-bottom:16px;">
+        <div style="font-size:0.82rem;font-weight:700;color:var(--brown);margin-bottom:10px;">Jenis</div>
+        <div style="display:flex;gap:8px;">
+          <button class="op-btn active" data-type="pulsa" id="btnTypePulsa">💰 Pulsa</button>
+          <button class="op-btn" data-type="data" id="btnTypeData">📶 Paket Data</button>
+        </div>
       </div>
-      <a href="https://wa.me/6281234567890?text=Halo+kak+Enuy%2C+saya+mau+top-up+pulsa" class="btn-wa-topup" target="_blank" id="btnWaPulsa">
-        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        Pesan via WhatsApp
-      </a>
+
+      <!-- Pilih Nominal -->
+      <div style="margin-bottom:16px;">
+        <div style="font-size:0.82rem;font-weight:700;color:var(--brown);margin-bottom:10px;">Pilih Nominal</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;" id="nominalGrid"></div>
+      </div>
+
+      <!-- Nomor Tujuan -->
+      <div class="form-group">
+        <label>Nomor HP Tujuan *</label>
+        <input type="tel" id="pulsaTarget" placeholder="Contoh: 08123456789" inputmode="numeric" />
+      </div>
+
+      <!-- Nama & WA -->
+      <div class="form-group">
+        <label>Nama Kamu *</label>
+        <input type="text" id="pulsaName" placeholder="Nama lengkap" />
+      </div>
+      <div class="form-group">
+        <label>Nomor WhatsApp Kamu *</label>
+        <input type="tel" id="pulsaWA" placeholder="Contoh: 08123456789" inputmode="numeric" />
+      </div>
+
+      <!-- Harga terpilih -->
+      <div id="pulsaPriceBox" style="display:none;background:var(--cream-dk);border-radius:12px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <span style="font-size:0.78rem;color:var(--gray);">Harga</span>
+        <span style="font-size:1.1rem;font-weight:800;color:var(--purple);" id="pulsaPriceVal">Rp 0</span>
+      </div>
+
+      <button class="btn-bayar" id="btnBeliPulsa" disabled>⚡ Beli Sekarang</button>
+    </div>
+
+    <!-- Hasil transaksi -->
+    <div class="result-box" id="pulsaResult" style="display:none;">
+      <div class="result-icon" id="pulsaResultIcon"></div>
+      <div class="result-title" id="pulsaResultTitle"></div>
+      <div class="result-detail" id="pulsaResultDetail"></div>
+      <button class="btn-bayar" style="margin-top:14px;" onclick="resetPulsaForm()">⬅ Order Lagi</button>
     </div>
   </div><!-- /#pagePulsa -->
 
@@ -818,9 +896,222 @@
   // ─── Isi nomor WA admin dari env / fallback ───────────────────
   // Nomor WA admin diisi dari halaman index (window.ADMIN_WA) atau hardcode
   // Kamu bisa ganti nomor di sini setelah deploy
-  const ADMIN_WA_NUM = "6282118213207";
-  document.getElementById("btnWaPulsa").href =
-    `https://wa.me/${ADMIN_WA_NUM}?text=Halo+kak+Enuy%2C+saya+mau+order+top-up+pulsa`;
+  // ─── PULSA & DATA — langsung ke Cloudflare Worker ────────────
+  const WORKER_URL    = "https://proxy.enuyrasa.my.id/topup-pulsa";
+  const WORKER_SECRET = "Ucup050205";
+
+  // Katalog nominal per operator & jenis
+  const PULSA_CATALOG = {
+    Telkomsel: {
+      pulsa: [
+        { sku:"xld5",   label:"Rp 5.000",  price:6500  },
+        { sku:"xld10",  label:"Rp 10.000", price:12000 },
+        { sku:"xld20",  label:"Rp 20.000", price:21500 },
+        { sku:"xld25",  label:"Rp 25.000", price:26500 },
+        { sku:"xld50",  label:"Rp 50.000", price:52000 },
+        { sku:"xld100", label:"Rp 100.000",price:102000 },
+      ],
+      data: [
+        { sku:"tsel1gb",  label:"1 GB\n1 Hari",   price:15000 },
+        { sku:"tsel3gb",  label:"3 GB\n7 Hari",   price:28000 },
+        { sku:"tsel5gb",  label:"5 GB\n30 Hari",  price:45000 },
+        { sku:"tsel10gb", label:"10 GB\n30 Hari", price:75000 },
+      ]
+    },
+    XL: {
+      pulsa: [
+        { sku:"xl5",   label:"Rp 5.000",  price:6000  },
+        { sku:"xl10",  label:"Rp 10.000", price:11500 },
+        { sku:"xl20",  label:"Rp 20.000", price:21000 },
+        { sku:"xl50",  label:"Rp 50.000", price:51500 },
+        { sku:"xl100", label:"Rp 100.000",price:101500 },
+      ],
+      data: [
+        { sku:"xl1gb",  label:"1 GB\n7 Hari",   price:14000 },
+        { sku:"xl5gb",  label:"5 GB\n30 Hari",  price:42000 },
+        { sku:"xl10gb", label:"10 GB\n30 Hari", price:70000 },
+      ]
+    },
+    Indosat: {
+      pulsa: [
+        { sku:"im5",   label:"Rp 5.000",  price:6000  },
+        { sku:"im10",  label:"Rp 10.000", price:11500 },
+        { sku:"im20",  label:"Rp 20.000", price:21000 },
+        { sku:"im50",  label:"Rp 50.000", price:51500 },
+        { sku:"im100", label:"Rp 100.000",price:101500 },
+      ],
+      data: [
+        { sku:"im1gb",  label:"1 GB\n7 Hari",   price:14000 },
+        { sku:"im5gb",  label:"5 GB\n30 Hari",  price:42000 },
+        { sku:"im10gb", label:"10 GB\n30 Hari", price:70000 },
+      ]
+    },
+    Tri: {
+      pulsa: [
+        { sku:"tri5",   label:"Rp 5.000",  price:6000  },
+        { sku:"tri10",  label:"Rp 10.000", price:11500 },
+        { sku:"tri20",  label:"Rp 20.000", price:21000 },
+        { sku:"tri50",  label:"Rp 50.000", price:51500 },
+        { sku:"tri100", label:"Rp 100.000",price:101500 },
+      ],
+      data: [
+        { sku:"tri1gb",  label:"1 GB\n7 Hari",   price:13000 },
+        { sku:"tri5gb",  label:"5 GB\n30 Hari",  price:40000 },
+        { sku:"tri10gb", label:"10 GB\n30 Hari", price:68000 },
+      ]
+    },
+    Smartfren: {
+      pulsa: [
+        { sku:"sf10",  label:"Rp 10.000", price:11500 },
+        { sku:"sf20",  label:"Rp 20.000", price:21000 },
+        { sku:"sf50",  label:"Rp 50.000", price:51500 },
+        { sku:"sf100", label:"Rp 100.000",price:101500 },
+      ],
+      data: [
+        { sku:"sf1gb",  label:"1 GB\n7 Hari",   price:13000 },
+        { sku:"sf5gb",  label:"5 GB\n30 Hari",  price:40000 },
+        { sku:"sf10gb", label:"10 GB\n30 Hari", price:68000 },
+      ]
+    },
+    "By.U": {
+      pulsa: [
+        { sku:"byu10",  label:"Rp 10.000", price:11500 },
+        { sku:"byu20",  label:"Rp 20.000", price:21000 },
+        { sku:"byu50",  label:"Rp 50.000", price:51500 },
+      ],
+      data: [
+        { sku:"byu1gb",  label:"1 GB\n7 Hari",  price:13000 },
+        { sku:"byu5gb",  label:"5 GB\n30 Hari", price:40000 },
+      ]
+    }
+  };
+
+  let pulsaOp      = "Telkomsel";
+  let pulsaType    = "pulsa";
+  let pulsaSelected = null;
+
+  function renderNominal() {
+    const grid   = document.getElementById("nominalGrid");
+    const items  = (PULSA_CATALOG[pulsaOp] || {})[pulsaType] || [];
+    pulsaSelected = null;
+    document.getElementById("pulsaPriceBox").style.display = "none";
+    document.getElementById("btnBeliPulsa").disabled = true;
+
+    grid.innerHTML = items.map((item, i) => `
+      <button class="nominal-btn" data-idx="${i}">
+        ${item.label.replace("\n","<br>")}
+        <span class="nom-label">${fmt(item.price)}</span>
+      </button>
+    `).join("");
+
+    grid.querySelectorAll(".nominal-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        grid.querySelectorAll(".nominal-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        pulsaSelected = items[parseInt(btn.dataset.idx)];
+        document.getElementById("pulsaPriceBox").style.display = "flex";
+        document.getElementById("pulsaPriceVal").textContent = fmt(pulsaSelected.price);
+        document.getElementById("btnBeliPulsa").disabled = false;
+      });
+    });
+  }
+
+  // Operator buttons
+  document.querySelectorAll("#operatorGrid .op-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#operatorGrid .op-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      pulsaOp = btn.dataset.op;
+      renderNominal();
+    });
+  });
+
+  // Jenis buttons
+  document.getElementById("btnTypePulsa").addEventListener("click", () => {
+    document.getElementById("btnTypePulsa").classList.add("active");
+    document.getElementById("btnTypeData").classList.remove("active");
+    pulsaType = "pulsa";
+    renderNominal();
+  });
+  document.getElementById("btnTypeData").addEventListener("click", () => {
+    document.getElementById("btnTypeData").classList.add("active");
+    document.getElementById("btnTypePulsa").classList.remove("active");
+    pulsaType = "data";
+    renderNominal();
+  });
+
+  // Init nominal
+  renderNominal();
+
+  // Submit order pulsa ke Worker
+  document.getElementById("btnBeliPulsa").addEventListener("click", async () => {
+    if (!pulsaSelected) return;
+    const target = document.getElementById("pulsaTarget").value.trim();
+    const name   = document.getElementById("pulsaName").value.trim();
+    const wa     = document.getElementById("pulsaWA").value.trim();
+    if (!target) { showToast("Masukkan nomor HP tujuan."); return; }
+    if (!name)   { showToast("Masukkan nama kamu."); return; }
+    if (!wa)     { showToast("Masukkan nomor WhatsApp kamu."); return; }
+
+    const btn = document.getElementById("btnBeliPulsa");
+    btn.disabled = true; btn.textContent = "⏳ Memproses...";
+
+    try {
+      const res  = await fetch(WORKER_URL, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          workerSecret:  WORKER_SECRET,
+          customerName:  name,
+          customerWA:    wa,
+          targetNumber:  target,
+          sku:           pulsaSelected.sku,
+          price:         pulsaSelected.price,
+          notes:         `${pulsaOp} ${pulsaType} ${pulsaSelected.label}`
+        })
+      });
+      const data = await res.json();
+
+      document.getElementById("pulsaForm").style.display   = "none";
+      document.getElementById("pulsaResult").style.display = "block";
+
+      if (data.status === "success") {
+        document.getElementById("pulsaResult").className       = "result-box success";
+        document.getElementById("pulsaResultIcon").textContent  = "✅";
+        document.getElementById("pulsaResultTitle").textContent = "Top-up Berhasil!";
+        document.getElementById("pulsaResultDetail").innerHTML  = `Berhasil dikirim ke <strong>${target}</strong>.<br>SN: ${data.sn || "-"}<br>Ref: ${data.refId}`;
+      } else if (data.status === "pending") {
+        document.getElementById("pulsaResult").className       = "result-box pending";
+        document.getElementById("pulsaResultIcon").textContent  = "⏳";
+        document.getElementById("pulsaResultTitle").textContent = "Pesanan Diproses";
+        document.getElementById("pulsaResultDetail").innerHTML  = `Ref: <strong>${data.refId}</strong><br>Pesanan sedang diproses. Cek status via WA ke admin jika belum masuk dalam 5 menit.`;
+      } else {
+        document.getElementById("pulsaResult").className       = "result-box failed";
+        document.getElementById("pulsaResultIcon").textContent  = "❌";
+        document.getElementById("pulsaResultTitle").textContent = "Transaksi Gagal";
+        document.getElementById("pulsaResultDetail").textContent = data.message || data.error || "Terjadi kesalahan. Hubungi admin.";
+      }
+    } catch (err) {
+      document.getElementById("pulsaForm").style.display   = "none";
+      document.getElementById("pulsaResult").style.display = "block";
+      document.getElementById("pulsaResult").className     = "result-box failed";
+      document.getElementById("pulsaResultIcon").textContent  = "❌";
+      document.getElementById("pulsaResultTitle").textContent = "Gagal Terhubung";
+      document.getElementById("pulsaResultDetail").textContent = "Periksa koneksi dan coba lagi.";
+    } finally {
+      btn.disabled = false; btn.textContent = "⚡ Beli Sekarang";
+    }
+  });
+
+  function resetPulsaForm() {
+    document.getElementById("pulsaForm").style.display   = "block";
+    document.getElementById("pulsaResult").style.display = "none";
+    document.getElementById("pulsaTarget").value = "";
+    document.getElementById("pulsaName").value   = "";
+    document.getElementById("pulsaWA").value     = "";
+    pulsaSelected = null;
+    renderNominal();
+  }
 </script>
 </body>
 </html>
