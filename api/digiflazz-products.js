@@ -1,5 +1,5 @@
 /**
- * GET /api/digiflazz-products?type=pulsa|data|all
+ * GET /api/digiflazz-products?type=pulsa|data|game|all
  *
  * Ambil price list produk digital dari Digiflazz, lalu terapkan markup
  * sehingga harga yang tampil ke pelanggan sudah termasuk keuntungan.
@@ -63,13 +63,16 @@ export default async function handler(req, res) {
     if (!json.data)
       return res.status(502).json({ error: "Digiflazz tidak mengembalikan data.", detail: json.rc || json.message });
 
-    const ALLOWED = ["Pulsa", "Data", "Paket Data", "Paket Telepon"];
+    const PULSA_DATA = ["Pulsa", "Data", "Paket Data", "Paket Telepon"];
+    const GAME_CATS  = ["Games", "Game", "Voucher Game", "Hiburan", "E-Money"];
     const typeFilter = (req.query.type || "all").toLowerCase();
 
-    let items = json.data.filter(p => p.buyer_product_status === true && ALLOWED.includes(p.category));
+    let items = json.data.filter(p => p.buyer_product_status === true);
 
-    if (typeFilter === "pulsa")      items = items.filter(p => p.category === "Pulsa");
-    else if (typeFilter === "data")  items = items.filter(p => p.category !== "Pulsa");
+    if (typeFilter === "pulsa")     items = items.filter(p => p.category === "Pulsa");
+    else if (typeFilter === "data") items = items.filter(p => ["Data","Paket Data","Paket Telepon"].includes(p.category));
+    else if (typeFilter === "game") items = items.filter(p => GAME_CATS.includes(p.category));
+    else                            items = items.filter(p => [...PULSA_DATA, ...GAME_CATS].includes(p.category));
 
     const products = items.map(p => {
       const sellPrice = applyMarkup(p.price, markupPct, markupFlat, markupRound);
