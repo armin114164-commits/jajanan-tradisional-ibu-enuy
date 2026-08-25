@@ -395,6 +395,33 @@
     .result-box .result-title { font-size: 0.92rem; font-weight: 800; margin-bottom: 4px; }
     .result-box .result-detail { font-size: 0.78rem; color: var(--gray); line-height: 1.5; }
 
+    /* ══ PAYMENT INFO BOX ═══════════════════════════════════════ */
+    .pay-box {
+      background: var(--white);
+      border: 2px solid #bbf7d0;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    .pay-box-title { font-size: 0.92rem; font-weight: 800; color: var(--green); margin-bottom: 12px; text-align: center; }
+    .pay-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--cream-dk); font-size: 0.82rem; }
+    .pay-row:last-child { border-bottom: none; }
+    .pay-row .lbl { color: var(--gray); }
+    .pay-row .val { font-weight: 700; color: var(--brown); }
+    .pay-row .val.big { font-size: 1rem; color: var(--purple); }
+    .pay-method { margin-top: 12px; background: var(--cream-dk); border-radius: 10px; padding: 12px; font-size: 0.8rem; line-height: 1.7; }
+    .pay-method strong { color: var(--brown); display: block; margin-bottom: 4px; }
+    .btn-wa-konfirmasi {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: #25d366; color: var(--white);
+      border: none; border-radius: 14px;
+      padding: 12px; width: 100%; margin-top: 14px;
+      font-size: 0.88rem; font-weight: 800; cursor: pointer;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .btn-wa-konfirmasi:hover { background: #1da851; }
+
     /* ══ OPERATOR / NOMINAL BUTTONS ═════════════════════════════ */
     .op-btn {
       padding: 8px 6px;
@@ -567,12 +594,26 @@
       <button class="btn-bayar" id="btnBeliPulsa" disabled>⚡ Beli Sekarang</button>
     </div>
 
-    <!-- Hasil transaksi -->
-    <div class="result-box" id="pulsaResult" style="display:none;">
-      <div class="result-icon" id="pulsaResultIcon"></div>
-      <div class="result-title" id="pulsaResultTitle"></div>
-      <div class="result-detail" id="pulsaResultDetail"></div>
-      <button class="btn-bayar" style="margin-top:14px;" onclick="resetPulsaForm()">⬅ Order Lagi</button>
+    <!-- Hasil order — info pembayaran -->
+    <div id="pulsaResult" style="display:none;">
+      <div class="pay-box" id="pulsaPayBox">
+        <div class="pay-box-title">✅ Order Diterima!</div>
+        <div class="pay-row"><span class="lbl">Produk</span><span class="val" id="prProduk"></span></div>
+        <div class="pay-row"><span class="lbl">Nomor Tujuan</span><span class="val" id="prNomor"></span></div>
+        <div class="pay-row"><span class="lbl">Total Bayar</span><span class="val big" id="prHarga"></span></div>
+        <div class="pay-row"><span class="lbl">Ref Order</span><span class="val" id="prRef"></span></div>
+        <div class="pay-method">
+          <strong>💳 Cara Pembayaran:</strong>
+          🏦 BRI: <b>000501218837506</b> a.n. Muhammad Supian<br>
+          💚 Dana: <b>081313172199</b> a.n. Muhammad Supian<br>
+          📱 QRIS: tersedia di halaman utama
+        </div>
+        <a id="btnKonfirmasiWA" href="#" target="_blank" class="btn-wa-konfirmasi">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.553 4.103 1.523 5.828L.057 23.357a.75.75 0 0 0 .921.921l5.529-1.466A11.944 11.944 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.9 0-3.68-.523-5.2-1.432l-.371-.223-3.862 1.024 1.024-3.742-.244-.386A9.956 9.956 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          Konfirmasi Pembayaran via WA
+        </a>
+      </div>
+      <button class="btn-bayar" style="background:var(--gray);" onclick="resetPulsaForm()">⬅ Order Lagi</button>
     </div>
   </div><!-- /#pagePulsa -->
 
@@ -1051,7 +1092,7 @@
   // Init nominal
   renderNominal();
 
-  // Submit order pulsa ke Worker
+  // Submit order pulsa → simpan ke DB dulu, tampilkan info bayar
   document.getElementById("btnBeliPulsa").addEventListener("click", async () => {
     if (!pulsaSelected) return;
     const target = document.getElementById("pulsaTarget").value.trim();
@@ -1065,47 +1106,44 @@
     btn.disabled = true; btn.textContent = "⏳ Memproses...";
 
     try {
-      const res  = await fetch(WORKER_URL, {
+      const res  = await fetch("/api/digital-order", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          workerSecret:  WORKER_SECRET,
-          customerName:  name,
-          customerWA:    wa,
-          targetNumber:  target,
-          sku:           pulsaSelected.sku,
-          price:         pulsaSelected.price,
-          notes:         `${pulsaOp} ${pulsaType} ${pulsaSelected.label}`
+          customerName: name,
+          customerWA:   wa,
+          targetNumber: target,
+          sku:          pulsaSelected.sku,
+          price:        pulsaSelected.price,
+          operator:     pulsaOp,
+          type:         pulsaType,
+          notes:        `${pulsaOp} ${pulsaType} ${pulsaSelected.label}`
         })
       });
       const data = await res.json();
 
-      document.getElementById("pulsaForm").style.display   = "none";
-      document.getElementById("pulsaResult").style.display = "block";
-
-      if (data.status === "success") {
-        document.getElementById("pulsaResult").className       = "result-box success";
-        document.getElementById("pulsaResultIcon").textContent  = "✅";
-        document.getElementById("pulsaResultTitle").textContent = "Top-up Berhasil!";
-        document.getElementById("pulsaResultDetail").innerHTML  = `Berhasil dikirim ke <strong>${target}</strong>.<br>SN: ${data.sn || "-"}<br>Ref: ${data.refId}`;
-      } else if (data.status === "pending") {
-        document.getElementById("pulsaResult").className       = "result-box pending";
-        document.getElementById("pulsaResultIcon").textContent  = "⏳";
-        document.getElementById("pulsaResultTitle").textContent = "Pesanan Diproses";
-        document.getElementById("pulsaResultDetail").innerHTML  = `Ref: <strong>${data.refId}</strong><br>Pesanan sedang diproses. Cek status via WA ke admin jika belum masuk dalam 5 menit.`;
-      } else {
-        document.getElementById("pulsaResult").className       = "result-box failed";
-        document.getElementById("pulsaResultIcon").textContent  = "❌";
-        document.getElementById("pulsaResultTitle").textContent = "Transaksi Gagal";
-        document.getElementById("pulsaResultDetail").textContent = data.message || data.error || "Terjadi kesalahan. Hubungi admin.";
+      if (!data.success) {
+        showToast(data.error || "Gagal membuat order. Coba lagi.");
+        return;
       }
-    } catch (err) {
+
+      // Tampilkan info pembayaran
       document.getElementById("pulsaForm").style.display   = "none";
       document.getElementById("pulsaResult").style.display = "block";
-      document.getElementById("pulsaResult").className     = "result-box failed";
-      document.getElementById("pulsaResultIcon").textContent  = "❌";
-      document.getElementById("pulsaResultTitle").textContent = "Gagal Terhubung";
-      document.getElementById("pulsaResultDetail").textContent = "Periksa koneksi dan coba lagi.";
+      document.getElementById("prProduk").textContent = `${pulsaOp} ${pulsaType === "pulsa" ? "Pulsa" : "Paket Data"} ${pulsaSelected.label}`;
+      document.getElementById("prNomor").textContent  = target;
+      document.getElementById("prHarga").textContent  = fmt(data.price);
+      document.getElementById("prRef").textContent    = data.refId;
+
+      // Link WA konfirmasi ke admin
+      const waMsg = encodeURIComponent(
+        `Halo admin, saya sudah transfer untuk order pulsa.\n` +
+        `Nama: ${name}\nRef: ${data.refId}\nNomor: ${target}\nTotal: ${fmt(data.price)}\n\nMohon dikonfirmasi ya 🙏`
+      );
+      document.getElementById("btnKonfirmasiWA").href = `https://wa.me/6282118213207?text=${waMsg}`;
+
+    } catch (err) {
+      showToast("Gagal terhubung. Periksa koneksi dan coba lagi.");
     } finally {
       btn.disabled = false; btn.textContent = "⚡ Beli Sekarang";
     }
