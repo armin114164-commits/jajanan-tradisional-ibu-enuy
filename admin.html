@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin — Dapur Tradisional Ibu Enuy</title>
+<style>
+  :root {
+    --brown: #6b3a2a;
+    --brown-dk: #4a2419;
+    --cream: #fdf6ec;
+    --gold: #d4a843;
+    --green: #16a34a;
+    --red: #dc2626;
+    --blue: #3b82f6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    background: linear-gradient(160deg, #f5e9d5 0%, #fdf6ec 60%, #ffe8b0 100%);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  /* ── Header ── */
+  .header {
+    max-width: 900px;
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .header h1 { color: var(--brown-dk); font-size: 1.2rem; }
+  .header p  { color: #6b7280; font-size: 0.8rem; margin-top: 2px; }
+  .btn-preview {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 8px;
+    background: var(--brown); color: #fff;
+    font-size: 0.82rem; font-weight: 600;
+    text-decoration: none; border: none; cursor: pointer;
+  }
+  .btn-preview:hover { background: var(--brown-dk); }
+
+  /* ── Layout ── */
+  .layout {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  @media (max-width: 700px) { .layout { grid-template-columns: 1fr; } }
+
+  /* ── Card ── */
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  .card h2 { color: var(--brown-dk); font-size: 0.95rem; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #f0e8d8; }
+
+  /* ── Form upload ── */
+  label { display: block; font-weight: 600; color: var(--brown-dk); margin: 12px 0 5px; font-size: 0.85rem; }
+  input[type="password"], input[type="file"] {
+    width: 100%; padding: 9px 11px;
+    border: 1.5px solid #e5d4b8; border-radius: 8px; font-size: 0.88rem;
+  }
+  .btn-upload {
+    margin-top: 14px; width: 100%; padding: 11px;
+    border: none; border-radius: 8px;
+    background: var(--brown); color: #fff;
+    font-weight: 700; font-size: 0.88rem; cursor: pointer;
+  }
+  .btn-upload:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn-upload:hover:not(:disabled) { background: var(--brown-dk); }
+  #uploadResult {
+    margin-top: 14px; font-size: 0.82rem;
+    white-space: pre-wrap; padding: 10px; border-radius: 8px; display: none;
+  }
+  #uploadResult.ok  { display: block; background: #e9f9ee; color: var(--green); }
+  #uploadResult.err { display: block; background: #fdeaea; color: var(--red); }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex; gap: 0; margin-bottom: 20px;
+    border-bottom: 2px solid #e5d4b8;
+    max-width: 900px; margin: 0 auto 20px;
+  }
+  .tab-btn {
+    padding: 9px 20px; border: none; background: none;
+    font-size: 0.85rem; font-weight: 600; color: #9ca3af;
+    cursor: pointer; border-bottom: 2px solid transparent;
+    margin-bottom: -2px; transition: color 0.15s;
+  }
+  .tab-btn.active { color: var(--brown); border-bottom-color: var(--brown); }
+  .tab-btn:hover:not(.active) { color: var(--brown-dk); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── Produk list ── */
+  .prod-list-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+    padding-bottom: 10px; border-bottom: 1px solid #f0e8d8;
+  }
+  .prod-list-header h2 { border: none; padding: 0; margin: 0; }
+  .btn-refresh {
+    padding: 5px 10px; border-radius: 6px; border: 1.5px solid #e5d4b8;
+    background: #fff; color: var(--brown); font-size: 0.78rem; font-weight: 600; cursor: pointer;
+  }
+  .btn-refresh:hover { background: var(--cream); }
+
+  /* ── Orders list ── */
+  .order-filter {
+    display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 4px 12px; border-radius: 14px; border: 1.5px solid #e5d4b8;
+    background: #fff; color: var(--brown); font-size: 0.75rem; font-weight: 600; cursor: pointer;
+  }
+  .filter-btn.active { background: var(--brown); color: #fff; border-color: var(--brown); }
+  .order-item {
+    border: 1.5px solid #e5d4b8; border-radius: 12px;
+    padding: 14px; margin-bottom: 10px; background: #fff;
+  }
+  .order-item.pending  { border-left: 4px solid #f59e0b; }
+  .order-item.confirmed { border-left: 4px solid var(--green); }
+  .order-item.cancelled { border-left: 4px solid var(--red); opacity: 0.6; }
+  .order-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px; flex-wrap: wrap; gap: 6px;
+  }
+  .order-id { font-weight: 800; color: var(--brown-dk); font-size: 0.88rem; }
+  .order-status {
+    font-size: 0.7rem; font-weight: 700; padding: 2px 9px; border-radius: 12px;
+  }
+  .order-status.pending   { background: #fef3c7; color: #92400e; }
+  .order-status.confirmed { background: #dcfce7; color: #15803d; }
+  .order-status.cancelled { background: #fee2e2; color: #991b1b; }
+  .order-customer { font-size: 0.8rem; color: #374151; margin-bottom: 6px; }
+  .order-customer span { color: var(--brown); font-weight: 600; }
+  .order-items { font-size: 0.78rem; color: #6b7280; margin-bottom: 8px; line-height: 1.6; }
+  .order-total { font-size: 0.88rem; font-weight: 800; color: var(--brown); }
+  .order-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .btn-confirm {
+    padding: 6px 14px; border-radius: 7px; border: none;
+    background: var(--green); color: #fff; font-size: 0.78rem; font-weight: 700; cursor: pointer;
+  }
+  .btn-confirm:hover { background: #15803d; }
+  .btn-cancel-order {
+    padding: 6px 14px; border-radius: 7px; border: 1.5px solid var(--red);
+    background: #fff; color: var(--red); font-size: 0.78rem; font-weight: 700; cursor: pointer;
+  }
+  .btn-cancel-order:hover { background: #fee2e2; }
+  .order-date { font-size: 0.7rem; color: #9ca3af; margin-top: 4px; }
+  .order-badge-count {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--red); color: #fff;
+    font-size: 0.65rem; font-weight: 800;
+    width: 18px; height: 18px; border-radius: 50%;
+    margin-left: 6px; vertical-align: middle;
+  }
+
+  .prod-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px; border-radius: 10px; margin-bottom: 8px;
+    border: 1.5px solid #f0e8d8; background: #fdfaf6;
+    transition: border-color 0.15s;
+  }
+  .prod-item:hover { border-color: #d4a843; }
+  .prod-item img {
+    width: 52px; height: 52px; object-fit: cover;
+    border-radius: 8px; background: #f0e8d8; flex-shrink: 0;
+  }
+  .prod-item-info { flex: 1; min-width: 0; }
+  .prod-item-name { font-weight: 700; font-size: 0.88rem; color: var(--brown-dk); }
+  .prod-item-price { font-size: 0.78rem; color: #6b7280; margin-top: 2px; }
+  .prod-item-badges { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+  .badge {
+    font-size: 0.68rem; font-weight: 700; padding: 2px 7px; border-radius: 10px;
+  }
+  .badge-ready    { background: #dcfce7; color: #16a34a; }
+  .badge-preorder { background: #fef9c3; color: #ca8a04; }
+  .prod-item-actions { display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; }
+  .btn-edit, .btn-delete {
+    padding: 5px 10px; border-radius: 6px; font-size: 0.75rem;
+    font-weight: 600; cursor: pointer; border: none;
+  }
+  .btn-edit   { background: #eff6ff; color: var(--blue); }
+  .btn-edit:hover   { background: #dbeafe; }
+  .btn-delete { background: #fdeaea; color: var(--red); }
+  .btn-delete:hover { background: #fecaca; }
+
+  .prod-empty { text-align: center; color: #9ca3af; font-size: 0.85rem; padding: 30px 0; }
+  #prodLoading { text-align: center; color: #9ca3af; font-size: 0.85rem; padding: 20px 0; }
+
+  /* ── Modal Edit ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 100;
+    align-items: center; justify-content: center; padding: 16px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: 16px; padding: 24px;
+    width: 100%; max-width: 420px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  }
+  .modal h3 { color: var(--brown-dk); font-size: 1rem; margin-bottom: 16px; }
+  .modal label { margin-top: 10px; }
+  .modal input, .modal select, .modal textarea {
+    width: 100%; padding: 9px 11px;
+    border: 1.5px solid #e5d4b8; border-radius: 8px; font-size: 0.88rem;
+    font-family: inherit;
+  }
+  .modal textarea { resize: vertical; min-height: 70px; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
+  .btn-save {
+    flex: 1; padding: 10px; border: none; border-radius: 8px;
+    background: var(--green); color: #fff; font-weight: 700; font-size: 0.88rem; cursor: pointer;
+  }
+  .btn-save:hover { background: #15803d; }
+  .btn-cancel {
+    flex: 1; padding: 10px; border: 1.5px solid #e5d4b8; border-radius: 8px;
+    background: #fff; color: #6b7280; font-weight: 600; font-size: 0.88rem; cursor: pointer;
+  }
+  .btn-cancel:hover { background: #f9fafb; }
+  /* ── Login screen ── */
+  .login-wrap {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 80vh;
+  }
+  .login-card {
+    background: #fff; border-radius: 16px; padding: 32px 28px;
+    max-width: 360px; width: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    text-align: center;
+  }
+  .login-card h2 { color: var(--brown-dk); font-size: 1.1rem; margin-bottom: 6px; }
+  .login-card p  { color: #6b7280; font-size: 0.82rem; margin-bottom: 20px; }
+  .login-card input {
+    width: 100%; padding: 10px 12px;
+    border: 1.5px solid #e5d4b8; border-radius: 8px;
+    font-size: 0.9rem; margin-bottom: 12px;
+    text-align: center; letter-spacing: 2px;
+  }
+  .btn-login {
+    width: 100%; padding: 11px; border: none; border-radius: 8px;
+    background: var(--brown); color: #fff;
+    font-weight: 700; font-size: 0.9rem; cursor: pointer;
+  }
+  .btn-login:hover { background: var(--brown-dk); }
+  .login-err { color: var(--red); font-size: 0.82rem; margin-top: 8px; display: none; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ── Login Screen ── -->
+<div class="login-wrap" id="loginScreen">
+  <div class="login-card">
+    <div style="font-size:2rem;margin-bottom:8px;">🍬</div>
+    <h2>Admin Login</h2>
+    <p>Masukkan token admin untuk melanjutkan</p>
+    <input type="password" id="loginToken" placeholder="••••••••••" autocomplete="off" />
+    <button class="btn-login" id="loginBtn">Masuk</button>
+    <div class="login-err" id="loginErr">Token salah, coba lagi.</div>
+  </div>
+</div>
+
+<!-- ── Dashboard (hidden until login) ── -->
+<div id="dashboard" class="hidden">
+
+<div class="header">
+  <div>
+    <h1>🍬 Admin — Dapur Tradisional Ibu Enuy</h1>
+    <p>Kelola produk toko kamu &nbsp;<span id="roleLabel" style="display:none;font-size:0.72rem;font-weight:700;background:#fef3c7;color:#92400e;border:1px solid #fde68a;border-radius:10px;padding:2px 8px;"></span></p>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <a class="btn-preview" href="/" target="_blank">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+      Lihat Toko
+    </a>
+    <button class="btn-preview" id="logoutBtn" style="background:#9ca3af;">Keluar</button>
+  </div>
+</div>
+
+<!-- ── Tabs ── -->
+<div class="tabs">
+  <button class="tab-btn active" data-tab="produk">📦 Produk</button>
+  <button class="tab-btn" data-tab="pesanan">🛒 Pesanan <span class="order-badge-count" id="pendingCount" style="display:none">0</span></button>
+  <button class="tab-btn" data-tab="digital">⚡ Digital</button>
+</div>
+
+<!-- ── TAB: PRODUK ── -->
+<div class="tab-panel active" id="tab-produk">
+<div class="layout">
+
+  <!-- ── Upload CSV/Excel ── -->
+  <div class="card">
+    <h2>📤 Upload Produk</h2>
+    <p style="font-size:0.78rem;color:#6b7280;margin-bottom:8px;">
+      Upload CSV/Excel untuk tambah atau update produk. Kolom: <b>id</b>, <b>name</b>, <b>price</b>, <b>desc</b>, <b>img</b>, <b>status</b>, <b>statusLabel</b>
+    </p>
+
+    <label for="file">File CSV / Excel</label>
+    <input type="file" id="file" accept=".csv,.xlsx,.xls" />
+
+    <button class="btn-upload" id="uploadBtn">Update Produk</button>
+    <div id="uploadResult"></div>
+  </div>
+
+  <!-- ── Daftar Produk ── -->
+  <div class="card">
+    <div class="prod-list-header">
+      <h2>📦 Daftar Produk</h2>
+      <button class="btn-refresh" id="refreshBtn">↻ Refresh</button>
+    </div>
+    <div id="prodLoading">Memuat produk...</div>
+    <div id="prodList"></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ── TAB: PESANAN ── -->
+<div class="tab-panel" id="tab-pesanan" style="max-width:900px;margin:0 auto;">
+  <div class="card">
+    <div class="prod-list-header">
+      <h2>🛒 Daftar Pesanan</h2>
+      <button class="btn-refresh" id="refreshOrdersBtn">↻ Refresh</button>
+    </div>
+    <div class="order-filter">
+      <button class="filter-btn active" data-filter="all">Semua</button>
+      <button class="filter-btn" data-filter="pending">⏳ Pending</button>
+      <button class="filter-btn" data-filter="confirmed">✅ Dikonfirmasi</button>
+      <button class="filter-btn" data-filter="cancelled">❌ Dibatalkan</button>
+    </div>
+    <div id="orderLoading" style="display:none;color:#9ca3af;font-size:0.82rem;">Memuat pesanan...</div>
+    <div id="orderList"></div>
+  </div>
+</div>
+
+</div>
+
+<!-- ── TAB: DIGITAL ── -->
+<div class="tab-panel" id="tab-digital" style="max-width:900px;margin:0 auto;">
+
+  <!-- Saldo & Status Digiflazz -->
+  <div class="card" style="margin-bottom:16px;">
+    <div class="prod-list-header">
+      <h2>💰 Saldo & Status Digiflazz</h2>
+      <button class="btn-refresh" id="checkBalanceBtn">Cek Saldo</button>
+    </div>
+    <div id="balanceResult" style="font-size:0.85rem;color:#6b7280;">Klik "Cek Saldo" untuk melihat saldo deposit Digiflazz.</div>
+    <div style="margin-top:12px;padding:10px 12px;background:#f0f4ff;border:1px solid #c7d7fe;border-radius:10px;font-size:0.76rem;color:#3730a3;line-height:1.7;">
+      ⚙️ <strong>Setup Callback URL di Digiflazz:</strong><br>
+      Masuk ke <a href="https://member.digiflazz.com/setting" target="_blank" style="color:var(--blue);">member.digiflazz.com → Pengaturan → Koneksi API</a><br>
+      Set <strong>Callback URL</strong> ke: <code style="background:#e0e7ff;padding:1px 5px;border-radius:4px;">https://enuyrasa.my.id/api/digiflazz-webhook</code><br>
+      Test koneksi: klik tombol di bawah (butuh akun admin yang sudah login).
+      <br><br>
+      🧪 <strong>Mode Testing:</strong> Set env var <code>DIGIFLAZZ_TESTING=false</code> setelah akun diverifikasi.
+    </div>
+  </div>
+
+  <!-- Riwayat Transaksi -->
+  <div class="card">
+    <div class="prod-list-header">
+      <h2>⚡ Riwayat Top-up Digital</h2>
+      <button class="btn-refresh" id="refreshDigitalBtn">↻ Refresh</button>
+    </div>
+    <div class="order-filter">
+      <button class="filter-btn active" data-dfilter="all">Semua</button>
+      <button class="filter-btn" data-dfilter="success">✅ Sukses</button>
+      <button class="filter-btn" data-dfilter="pending">⏳ Pending</button>
+      <button class="filter-btn" data-dfilter="failed">❌ Gagal</button>
+    </div>
+    <div id="digitalLoading" style="display:none;color:#9ca3af;font-size:0.82rem;padding:10px 0;">Memuat...</div>
+    <div id="digitalList"></div>
+  </div>
+
+</div>
+
+<!-- ── Modal Edit ── -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h3>✏️ Edit Produk</h3>
+    <input type="hidden" id="editId" />
+
+    <label>Nama Produk</label>
+    <input type="text" id="editName" placeholder="Nama produk" />
+
+    <label>Harga (Rp)</label>
+    <input type="number" id="editPrice" placeholder="Contoh: 32000" />
+
+    <label>Deskripsi</label>
+    <textarea id="editDesc" placeholder="Deskripsi produk"></textarea>
+
+    <label>URL Gambar</label>
+    <input type="text" id="editImg" placeholder="/images/produk.jpg" />
+
+    <label>Status</label>
+    <select id="editStatus">
+      <option value="ready">Ready Stock</option>
+      <option value="preorder">Pre Order</option>
+    </select>
+
+    <label>Label Status</label>
+    <input type="text" id="editStatusLabel" placeholder="Ready Stock / Pre Order" />
+
+    <label>Stok <small style="font-weight:400;color:#9ca3af">(-1 = tidak terbatas)</small></label>
+    <input type="number" id="editStock" placeholder="-1" value="-1" min="-1" />
+
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelEdit">Batal</button>
+      <button class="btn-save" id="saveEdit">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Auth ─────────────────────────────────────────────────────
+  let adminToken = sessionStorage.getItem("adminToken") || "";
+  let adminRole  = sessionStorage.getItem("adminRole")  || "admin";
+
+  function showDashboard() {
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+    // Tunjukkan badge role
+    const roleLabel = document.getElementById("roleLabel");
+    if (adminRole === "super_admin") {
+      roleLabel.textContent = "⭐ Super Admin";
+      roleLabel.style.display = "";
+    } else {
+      roleLabel.textContent = "Admin";
+      roleLabel.style.display = "";
+    }
+    // Sembunyikan tombol hapus produk jika bukan super admin
+    document.querySelectorAll(".btn-delete").forEach(btn => {
+      btn.style.display = adminRole === "super_admin" ? "" : "none";
+    });
+    loadProducts();
+    loadOrders();
+  }
+
+  if (adminToken) showDashboard();
+
+  document.getElementById("loginBtn").addEventListener("click", async () => {
+    const token  = document.getElementById("loginToken").value.trim();
+    const errEl  = document.getElementById("loginErr");
+    const btnEl  = document.getElementById("loginBtn");
+    errEl.style.display = "none";
+    if (!token) return;
+
+    btnEl.disabled = true; btnEl.textContent = "Memeriksa...";
+    try {
+      const res  = await fetch("/api/verify-token", {
+        method: "POST", headers: { "x-admin-token": token }
+      });
+      const data = await res.json();
+      if (res.status === 401) {
+        errEl.textContent = "Token salah, coba lagi.";
+        errEl.style.display = "block";
+        return;
+      }
+      adminToken = token;
+      adminRole  = data.role || "admin";
+      sessionStorage.setItem("adminToken", token);
+      sessionStorage.setItem("adminRole",  adminRole);
+      showDashboard();
+    } catch (err) {
+      errEl.textContent = "Gagal terhubung ke server.";
+      errEl.style.display = "block";
+    } finally {
+      btnEl.disabled = false; btnEl.textContent = "Masuk";
+    }
+  });
+
+  document.getElementById("loginToken").addEventListener("keydown", e => {
+    if (e.key === "Enter") document.getElementById("loginBtn").click();
+  });
+
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    sessionStorage.removeItem("adminToken");
+    sessionStorage.removeItem("adminRole");
+    adminToken = "";
+    adminRole  = "admin";
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("loginScreen").classList.remove("hidden");
+    document.getElementById("loginToken").value = "";
+  });
+
+  // ── Helpers ──────────────────────────────────────────────────
+  const fileEl     = document.getElementById("file");
+  const uploadBtn  = document.getElementById("uploadBtn");
+  const resultEl   = document.getElementById("uploadResult");
+  const prodList   = document.getElementById("prodList");
+  const prodLoading= document.getElementById("prodLoading");
+  const refreshBtn = document.getElementById("refreshBtn");
+  const editModal  = document.getElementById("editModal");
+
+  // ── Tabs ─────────────────────────────────────────────────────
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+      if (btn.dataset.tab === "pesanan") loadOrders();
+    });
+  });
+
+  function fmt(n) { return "Rp " + Number(n).toLocaleString("id-ID"); }
+
+  // ── Load produk ──────────────────────────────────────────────
+  async function loadProducts() {
+    prodLoading.style.display = "block";
+    prodList.innerHTML = "";
+    try {
+      const res  = await fetch("/api/products");
+      const data = await res.json();
+      prodLoading.style.display = "none";
+
+      if (!Array.isArray(data) || data.length === 0) {
+        prodList.innerHTML = '<div class="prod-empty">Belum ada produk</div>';
+        return;
+      }
+
+      data.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "prod-item";
+        const stockLabel = p.stock < 0 ? "∞ Tidak terbatas" : `Stok: ${p.stock}`;
+        const stockColor = p.stock === 0 ? "color:var(--red);font-weight:700;" : "color:#6b7280;";
+        div.innerHTML = `
+          <img src="${p.img}" alt="${p.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><rect width=%2224%22 height=%2224%22 fill=%22%23f0e8d8%22/></svg>'" />
+          <div class="prod-item-info">
+            <div class="prod-item-name">${p.name}</div>
+            <div class="prod-item-price">${fmt(p.price)} / ${p.unit || 'kotak'}</div>
+            <div style="font-size:0.72rem;margin-top:2px;${stockColor}">${stockLabel}</div>
+            <div class="prod-item-badges">
+              <span class="badge ${p.status === 'ready' ? 'badge-ready' : (p.status === 'habis' ? 'badge-preorder' : 'badge-preorder')}">${p.statusLabel}</span>
+            </div>
+          </div>
+          <div class="prod-item-actions">
+             <button class="btn-edit" onclick="openEdit(${JSON.stringify(p).replace(/"/g, '&quot;')})">Edit</button>
+             <button class="btn-delete" onclick="deleteProduct('${p.id}', '${p.name}')" style="${adminRole !== 'super_admin' ? 'display:none;' : ''}">Hapus</button>
+          </div>
+        `;
+        prodList.appendChild(div);
+      });
+    } catch (err) {
+      prodLoading.style.display = "none";
+      prodList.innerHTML = '<div class="prod-empty">Gagal memuat produk</div>';
+    }
+  }
+
+  // ── Upload CSV/Excel ─────────────────────────────────────────
+  uploadBtn.addEventListener("click", async () => {
+    const token = adminToken;
+    const file  = fileEl.files[0];
+    resultEl.className = "";
+    resultEl.style.display = "none";
+
+    if (!file) { showResult(false, "Pilih file CSV/Excel terlebih dahulu."); return; }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    uploadBtn.disabled    = true;
+    uploadBtn.textContent = "Mengunggah...";
+
+    try {
+      const res  = await fetch("/api/admin/import-products", {
+        method: "POST",
+        headers: { "x-admin-token": token },
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showResult(false, data.error || "Gagal mengupdate produk.");
+      } else {
+        let msg = `✅ ${data.updated} produk berhasil diperbarui.`;
+        if (data.skipped && data.skipped.length) {
+          msg += `\n\n⚠️ ${data.skipped.length} baris dilewati:\n`;
+          msg += data.skipped.map(s => `Baris ${s.row}: ${s.reason}`).join("\n");
+        }
+        showResult(true, msg);
+        loadProducts();
+      }
+    } catch (err) {
+      showResult(false, "Terjadi kesalahan koneksi: " + err.message);
+    } finally {
+      uploadBtn.disabled    = false;
+      uploadBtn.textContent = "Update Produk";
+    }
+  });
+
+  function showResult(ok, message) {
+    resultEl.className   = ok ? "ok" : "err";
+    resultEl.textContent = message;
+    resultEl.style.display = "block";
+  }
+
+  // ── Hapus produk ─────────────────────────────────────────────
+  async function deleteProduct(id, name) {
+    if (!confirm(`Hapus produk "${name}"?`)) return;
+    const token = adminToken;
+
+    try {
+      const res  = await fetch(`/api/delete-product?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+        headers: { "x-admin-token": token },
+      });
+      const data = await res.json();
+      if (!res.ok) { alert(data.error || "Gagal menghapus."); return; }
+      loadProducts();
+    } catch (err) {
+      alert("Gagal menghapus: " + err.message);
+    }
+  }
+
+  // ── Edit produk ──────────────────────────────────────────────
+  function openEdit(p) {
+    document.getElementById("editId").value          = p.id;
+    document.getElementById("editName").value        = p.name;
+    document.getElementById("editPrice").value       = p.price;
+    document.getElementById("editDesc").value        = p.desc || "";
+    document.getElementById("editImg").value         = p.img || "";
+    document.getElementById("editStatus").value      = p.status || "ready";
+    document.getElementById("editStatusLabel").value = p.statusLabel || "";
+    document.getElementById("editStock").value       = p.stock != null ? p.stock : -1;
+    editModal.classList.add("open");
+  }
+
+  document.getElementById("cancelEdit").addEventListener("click", () => {
+    editModal.classList.remove("open");
+  });
+
+  editModal.addEventListener("click", (e) => {
+    if (e.target === editModal) editModal.classList.remove("open");
+  });
+
+  document.getElementById("saveEdit").addEventListener("click", async () => {
+    const token = adminToken;
+
+    const id          = document.getElementById("editId").value;
+    const name        = document.getElementById("editName").value.trim();
+    const price       = parseInt(document.getElementById("editPrice").value, 10);
+    const desc        = document.getElementById("editDesc").value.trim();
+    const img         = document.getElementById("editImg").value.trim();
+    const status      = document.getElementById("editStatus").value;
+    const statusLabel = document.getElementById("editStatusLabel").value.trim();
+    const stock       = parseInt(document.getElementById("editStock").value, 10);
+
+    if (!name || isNaN(price)) { alert("Nama dan harga wajib diisi!"); return; }
+
+    const saveBtn = document.getElementById("saveEdit");
+    saveBtn.disabled    = true;
+    saveBtn.textContent = "Menyimpan...";
+
+    try {
+      const res  = await fetch("/api/update-product", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-token": token },
+        body: JSON.stringify({ id, name, price, desc, img, status, statusLabel, stock: isNaN(stock) ? -1 : stock }),
+      });
+      const data = await res.json();
+      if (!res.ok) { alert(data.error || "Gagal menyimpan."); return; }
+      editModal.classList.remove("open");
+      loadProducts();
+    } catch (err) {
+      alert("Gagal menyimpan: " + err.message);
+    } finally {
+      saveBtn.disabled    = false;
+      saveBtn.textContent = "Simpan";
+    }
+  });
+
+  refreshBtn.addEventListener("click", loadProducts);
+
+  // ── Orders ───────────────────────────────────────────────────
+  let currentOrderFilter = "all";
+
+  async function loadOrders() {
+    const orderList    = document.getElementById("orderList");
+    const orderLoading = document.getElementById("orderLoading");
+    orderLoading.style.display = "block";
+    orderList.innerHTML = "";
+    try {
+      const res  = await fetch(`/api/orders?status=${currentOrderFilter}`, {
+        headers: { "x-admin-token": adminToken }
+      });
+      const data = await res.json();
+      orderLoading.style.display = "none";
+      if (!res.ok) { orderList.innerHTML = `<div style="color:var(--red);font-size:0.82rem;">${data.error}</div>`; return; }
+      if (!data.length) { orderList.innerHTML = '<div style="color:#9ca3af;font-size:0.82rem;padding:12px 0;">Tidak ada pesanan.</div>'; return; }
+
+      // Update badge pending count
+      const pendingCountEl = document.getElementById("pendingCount");
+      const pendingN = data.filter(o => o.status === "pending").length;
+      if (pendingN > 0) { pendingCountEl.style.display = ""; pendingCountEl.textContent = pendingN; }
+      else { pendingCountEl.style.display = "none"; }
+
+      data.forEach(o => {
+        const div = document.createElement("div");
+        div.className = `order-item ${o.status}`;
+        const itemsHtml = o.items.map(i => `${i.qty}× ${i.name} = ${fmt(i.subtotal)}`).join("<br>");
+        const date = new Date(o.created_at).toLocaleString("id-ID");
+        const methodLabel = o.payment_method === "bri" ? "Transfer BRI" : o.payment_method === "dana" ? "Dana" : "QRIS";
+        div.innerHTML = `
+          <div class="order-header">
+            <div class="order-id">Pesanan #${o.id}</div>
+            <span class="order-status ${o.status}">${o.status === "pending" ? "⏳ Pending" : o.status === "confirmed" ? "✅ Dikonfirmasi" : "❌ Dibatalkan"}</span>
+          </div>
+          <div class="order-customer">
+            👤 <span>${o.customer_name}</span> &nbsp;·&nbsp;
+            📱 <span>${o.customer_wa}</span> &nbsp;·&nbsp;
+            💳 ${methodLabel}
+          </div>
+          <div class="order-customer">📍 ${o.customer_addr}</div>
+          <div class="order-items">${itemsHtml}</div>
+          <div class="order-total">Total: ${fmt(o.total)}</div>
+          <div class="order-date">${date}</div>
+          ${o.status === "pending" ? `
+          <div class="order-actions">
+            <button class="btn-confirm" onclick="confirmOrder(${o.id})">✅ Konfirmasi Bayar</button>
+            <button class="btn-cancel-order" onclick="cancelOrder(${o.id})">❌ Batalkan</button>
+          </div>` : ""}
+        `;
+        orderList.appendChild(div);
+      });
+    } catch (err) {
+      orderLoading.style.display = "none";
+      orderList.innerHTML = `<div style="color:var(--red);font-size:0.82rem;">Gagal memuat: ${err.message}</div>`;
+    }
+  }
+
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentOrderFilter = btn.dataset.filter;
+      loadOrders();
+    });
+  });
+
+  document.getElementById("refreshOrdersBtn").addEventListener("click", loadOrders);
+
+  async function confirmOrder(orderId) {
+    if (!confirm(`Konfirmasi pembayaran Pesanan #${orderId}? Stok akan otomatis berkurang.`)) return;
+    try {
+      const res  = await fetch("/api/confirm-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-token": adminToken },
+        body: JSON.stringify({ orderId })
+      });
+      const data = await res.json();
+      if (!res.ok) { alert(data.error || "Gagal konfirmasi."); return; }
+      loadOrders();
+      loadProducts(); // refresh stok produk
+    } catch (err) { alert("Gagal: " + err.message); }
+  }
+
+  async function cancelOrder(orderId) {
+    if (!confirm(`Batalkan Pesanan #${orderId}?`)) return;
+    try {
+      const res  = await fetch("/api/cancel-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-token": adminToken },
+        body: JSON.stringify({ orderId })
+      });
+      const data = await res.json();
+      if (!res.ok) { alert(data.error || "Gagal membatalkan."); return; }
+      loadOrders();
+    } catch (err) { alert("Gagal: " + err.message); }
+  }
+
+  refreshBtn.addEventListener("click", loadProducts);
+
+  // ── Digital Orders ───────────────────────────────────────────
+  let currentDigitalFilter = "all";
+
+  async function loadDigitalOrders() {
+    const list    = document.getElementById("digitalList");
+    const loading = document.getElementById("digitalLoading");
+    loading.style.display = "block";
+    list.innerHTML = "";
+    try {
+      const res  = await fetch(`/api/digital-orders?status=${currentDigitalFilter}`, {
+        headers: { "x-admin-token": adminToken }
+      });
+      const data = await res.json();
+      loading.style.display = "none";
+      if (!res.ok) { list.innerHTML = `<div style="color:var(--red);font-size:0.82rem;">${data.error}</div>`; return; }
+      if (!data.length) { list.innerHTML = '<div style="color:#9ca3af;font-size:0.82rem;padding:12px 0;">Belum ada transaksi digital.</div>'; return; }
+
+      list.innerHTML = data.map(o => {
+        const statusColor = o.status === "success" ? "#15803d" : o.status === "pending" ? "#b45309" : "#b91c1c";
+        const statusBg    = o.status === "success" ? "#dcfce7" : o.status === "pending" ? "#fef3c7" : "#fee2e2";
+        const statusLabel = o.status === "success" ? "✅ Sukses" : o.status === "pending" ? "⏳ Pending" : "❌ Gagal";
+        const date        = new Date(o.created_at).toLocaleString("id-ID");
+        return `
+          <div class="order-item ${o.status === 'success' ? 'confirmed' : o.status === 'failed' ? 'cancelled' : 'pending'}" style="margin-bottom:10px;">
+            <div class="order-header">
+              <div class="order-id">⚡ ${o.sku}</div>
+              <span class="order-status" style="background:${statusBg};color:${statusColor};">${statusLabel}</span>
+            </div>
+            <div class="order-customer">
+              👤 <span>${o.customer_name}</span> &nbsp;·&nbsp;
+              📱 <span>${o.customer_wa}</span>
+            </div>
+            <div class="order-customer">📲 Nomor tujuan: <span style="font-weight:700;">${o.target_number}</span></div>
+            <div class="order-items">
+              Harga: ${fmt(o.price)} &nbsp;·&nbsp; Ref: <code style="font-size:0.73rem;">${o.ref_id}</code>
+              ${o.digiflazz_sn ? `<br>SN: <code style="font-size:0.73rem;">${o.digiflazz_sn}</code>` : ""}
+              ${o.digiflazz_message ? `<br>Pesan: ${o.digiflazz_message}` : ""}
+            </div>
+            <div class="order-date">${date}</div>
+          </div>
+        `;
+      }).join("");
+    } catch (err) {
+      loading.style.display = "none";
+      list.innerHTML = `<div style="color:var(--red);font-size:0.82rem;">Gagal memuat: ${err.message}</div>`;
+    }
+  }
+
+  document.querySelectorAll("[data-dfilter]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-dfilter]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentDigitalFilter = btn.dataset.dfilter;
+      loadDigitalOrders();
+    });
+  });
+
+  document.getElementById("refreshDigitalBtn").addEventListener("click", loadDigitalOrders);
+
+  // ── Cek Saldo Digiflazz ──────────────────────────────────────
+  document.getElementById("checkBalanceBtn").addEventListener("click", async () => {
+    const el  = document.getElementById("balanceResult");
+    const btn = document.getElementById("checkBalanceBtn");
+    el.textContent  = "Mengambil saldo...";
+    btn.disabled    = true;
+    try {
+      const res  = await fetch("/api/digiflazz-balance", {
+        headers: { "x-admin-token": adminToken }
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        el.innerHTML = `<span style="color:var(--red);">❌ ${data.error || "Gagal mengambil saldo."}</span>`;
+        return;
+      }
+      const saldo = data.balance != null ? Number(data.balance).toLocaleString("id-ID") : "–";
+      el.innerHTML =
+        `<span style="font-size:1.1rem;font-weight:800;color:var(--green);">Rp ${saldo}</span>` +
+        `<span style="color:#6b7280;font-size:0.76rem;margin-left:8px;">(akun: ${data.username || "–"})</span>`;
+    } catch (err) {
+      el.innerHTML = `<span style="color:var(--red);">❌ Gagal: ${err.message}</span>`;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // Patch tab switch to also load digital orders
+  const origTabSwitch = document.querySelectorAll(".tab-btn");
+  origTabSwitch.forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.dataset.tab === "digital") loadDigitalOrders();
+    });
+  });
+
+  // ── Init ────────────────────────────────────────────────────
+  loadProducts();
+  loadOrders();
+</script>
+</body>
+</html>

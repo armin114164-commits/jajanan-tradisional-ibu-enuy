@@ -1,0 +1,4 @@
+id,name,price,desc,img,status,statusLabel
+wajik,Dodol Wajik,32000,"Wajik Manis legit, resep asli turun-temurun isi 40 pcs",/images/wajik.jpeg,ready,Ready Stock
+burayot,Burayot,40000,"Burayot Manis, Gurih dan wangi isi 32 pcs",/images/Burayot.jpeg,preorder,Pre Order
+rengginang,Rengginang,25000,"Gurih, Nikmat, Nyoss",/images/RENGGINANG.jpg,ready,Ready Stock

@@ -1,0 +1,11 @@
+{
+  "rewrites": [
+    { "source": "/api/admin/import-products", "destination": "/api/import-products" }
+  ],
+  "headers": [
+    {
+      "source": "/public/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000" }]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+﻿# Local dev
+.netlify
+node_modules/
+.vercel/
+
+# Environment variables — JANGAN pernah commit!
+.env
+.env.local
+.env.production
+
+# OS files
+.DS_Store
+Thumbs.db
+

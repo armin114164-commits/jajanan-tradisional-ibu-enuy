@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Top-up Digital — Dapur Tradisional Ibu Enuy 🍬</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brown:    #6b3a2a;
+      --brown-lt: #a0522d;
+      --brown-dk: #4a2419;
+      --cream:    #fdf6ec;
+      --cream-dk: #f5e9d5;
+      --gold:     #d4a843;
+      --gold-lt:  #f0c96e;
+      --white:    #ffffff;
+      --gray:     #6b7280;
+      --green:    #16a34a;
+      --red:      #dc2626;
+      --blue:     #3b82f6;
+      --purple:   #7c3aed;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      background: linear-gradient(160deg, #f5e9d5 0%, #fdf6ec 60%, #ffe8b0 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── HEADER ─── */
+    .site-header {
+      background: var(--brown);
+      color: var(--white);
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.22);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .header-brand h1 { font-size: 1.05rem; font-weight: 800; color: var(--white); }
+    .header-brand p  { font-size: 0.7rem; color: var(--gold-lt); }
+    .btn-back {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.15);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      border-radius: 22px; padding: 7px 14px;
+      color: var(--white); font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.25); }
+    .btn-back svg { width: 14px; height: 14px; fill: var(--white); }
+
+    /* ─── MAIN ─── */
+    .main {
+      flex: 1;
+      padding: 24px 16px 60px;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* ─── HERO ─── */
+    .digital-hero {
+      background: linear-gradient(135deg, var(--purple) 0%, #9333ea 100%);
+      border-radius: 20px;
+      padding: 24px 22px;
+      margin-bottom: 24px;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 22px rgba(124,58,237,0.25);
+    }
+    .hero-icon { font-size: 2.8rem; line-height: 1; flex-shrink: 0; }
+    .hero-text h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; }
+    .hero-text p  { font-size: 0.8rem; opacity: 0.85; line-height: 1.5; }
+
+    /* ─── FILTER BAR ─── */
+    .filter-bar {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 16px; align-items: center;
+    }
+    .filter-btn {
+      padding: 6px 16px; border-radius: 20px;
+      border: 1.5px solid #e5d4b8;
+      background: var(--white); color: var(--brown);
+      font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .filter-btn.active { background: var(--purple); border-color: var(--purple); color: var(--white); }
+    .filter-btn:hover:not(.active) { border-color: var(--purple); color: var(--purple); }
+
+    /* ─── SEARCH BOX ─── */
+    .search-wrap {
+      position: relative;
+      flex: 1; min-width: 180px;
+    }
+    .search-wrap svg {
+      position: absolute; left: 12px; top: 50%;
+      transform: translateY(-50%);
+      width: 15px; height: 15px; fill: var(--gray);
+      pointer-events: none;
+    }
+    .search-wrap input {
+      width: 100%; padding: 8px 12px 8px 34px;
+      border: 1.5px solid #e5d4b8; border-radius: 22px;
+      font-size: 0.82rem; outline: none;
+      background: var(--white); color: #2d1a0e;
+      transition: border-color 0.15s;
+    }
+    .search-wrap input:focus { border-color: var(--purple); }
+
+    /* ─── OPERATOR CHIPS ─── */
+    .operator-row {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .op-chip {
+      padding: 4px 12px; border-radius: 14px;
+      border: 1.5px solid #e5d4b8;
+      background: var(--white); color: var(--gray);
+      font-size: 0.75rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .op-chip.active { background: var(--brown); border-color: var(--brown); color: var(--white); }
+    .op-chip:hover:not(.active) { border-color: var(--brown); color: var(--brown); }
+
+    /* ─── PRODUCT GRID ─── */
+    .prod-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    @media (max-width: 480px) { .prod-grid { grid-template-columns: 1fr 1fr; gap: 10px; } }
+    @media (max-width: 340px) { .prod-grid { grid-template-columns: 1fr; } }
+
+    .prod-card {
+      background: var(--white);
+      border: 1.5px solid #eddfc6;
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+      box-shadow: 0 2px 10px rgba(107,58,42,0.07);
+    }
+    .prod-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(124,58,237,0.15);
+      border-color: var(--purple);
+    }
+    .prod-card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .prod-brand {
+      font-size: 0.68rem; font-weight: 800;
+      padding: 2px 8px; border-radius: 10px;
+      background: #f3e8ff; color: var(--purple);
+      border: 1px solid #e9d5ff;
+      text-transform: uppercase;
+    }
+    .prod-cat {
+      font-size: 0.65rem; font-weight: 700;
+      color: var(--gray);
+    }
+    .prod-name {
+      font-size: 0.83rem; font-weight: 700;
+      color: var(--brown-dk);
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    .prod-price {
+      font-size: 1rem; font-weight: 800;
+      color: var(--purple);
+    }
+    .btn-beli {
+      display: block; width: 100%;
+      margin-top: 10px;
+      padding: 8px; border: none; border-radius: 10px;
+      background: var(--purple); color: var(--white);
+      font-size: 0.8rem; font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-beli:hover { background: #6d28d9; }
+
+    /* ─── LOADING / EMPTY ─── */
+    .state-msg {
+      text-align: center;
+      color: var(--gray);
+      font-size: 0.85rem;
+      padding: 50px 20px;
+    }
+    .state-msg .icon { font-size: 2.5rem; margin-bottom: 10px; }
+
+    /* ─── MODAL TOPUP ─── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 500;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-sheet {
+      background: var(--white);
+      border-radius: 22px 22px 0 0;
+      width: 100%; max-width: 480px;
+      padding: 24px 22px 40px;
+      animation: slideUp 0.25s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .modal-handle {
+      width: 40px; height: 4px;
+      background: #e0c9b0; border-radius: 4px;
+      margin: 0 auto 18px;
+    }
+    .modal-title {
+      font-size: 1rem; font-weight: 800;
+      color: var(--brown-dk);
+      margin-bottom: 4px;
+    }
+    .modal-product-name {
+      font-size: 0.8rem; color: var(--gray);
+      margin-bottom: 16px;
+    }
+    .modal-price-box {
+      background: #f3e8ff;
+      border: 1.5px solid #e9d5ff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-price-box .lbl { font-size: 0.78rem; color: var(--gray); }
+    .modal-price-box .val { font-size: 1.1rem; font-weight: 800; color: var(--purple); }
+
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block; font-size: 0.82rem; font-weight: 700;
+      color: var(--brown-dk); margin-bottom: 5px;
+    }
+    .form-group input, .form-group textarea {
+      width: 100%; padding: 10px 12px;
+      border: 1.5px solid #e5d4b8; border-radius: 10px;
+      font-size: 0.88rem; outline: none;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--purple); }
+    .form-group textarea { resize: vertical; min-height: 60px; }
+
+    .btn-bayar {
+      width: 100%; padding: 14px; border: none; border-radius: 14px;
+      background: var(--purple); color: var(--white);
+      font-size: 0.95rem; font-weight: 800;
+      cursor: pointer; margin-top: 6px;
+      transition: background 0.15s;
+    }
+    .btn-bayar:hover { background: #6d28d9; }
+    .btn-bayar:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .btn-cancel-modal {
+      width: 100%; padding: 10px; margin-top: 8px;
+      border: 1.5px solid #e5d4b8; border-radius: 10px;
+      background: var(--white); color: var(--gray);
+      font-size: 0.85rem; font-weight: 600; cursor: pointer;
+    }
+    .btn-cancel-modal:hover { background: #f9fafb; }
+
+    /* ─── STATUS RESULT MODAL ─── */
+    .result-box {
+      display: none;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .result-box.success { background: #dcfce7; border: 1.5px solid #bbf7d0; }
+    .result-box.pending { background: #fffbeb; border: 1.5px solid #fde68a; }
+    .result-box.failed  { background: #fee2e2; border: 1.5px solid #fecaca; }
+    .result-box .result-icon { font-size: 2rem; margin-bottom: 6px; }
+    .result-box .result-title { font-size: 0.92rem; font-weight: 800; margin-bottom: 4px; }
+    .result-box .result-detail { font-size: 0.78rem; color: var(--gray); line-height: 1.5; }
+
+    /* ─── TOAST ─── */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--brown-dk); color: var(--white);
+      padding: 10px 20px; border-radius: 24px;
+      font-size: 0.82rem; font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.25s, transform 0.25s;
+      pointer-events: none;
+      z-index: 999; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ─── NOTICE BELUM SIAP ─── */
+    .notice-banner {
+      background: #fffbeb;
+      border: 1.5px solid #fde68a;
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      font-size: 0.8rem;
+      color: #92400e;
+      display: flex; align-items: flex-start; gap: 8px;
+      line-height: 1.5;
+    }
+    .notice-banner .icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header class="site-header">
+  <a href="/" class="header-brand" style="text-decoration:none;">
+    <div style="font-size:1.6rem;line-height:1;">🍬</div>
+    <div>
+      <h1>Dapur Tradisional Ibu Enuy</h1>
+      <p>Oleh-oleh & Digital</p>
+    </div>
+  </a>
+  <a href="/" class="btn-back">
+    <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
+    Kembali
+  </a>
+</header>
+
+<!-- ─── MAIN CONTENT ─── -->
+<main class="main">
+
+  <!-- Hero -->
+  <div class="digital-hero">
+    <div class="hero-icon">⚡</div>
+    <div class="hero-text">
+      <h2>Top-up Pulsa & Paket Data</h2>
+      <p>Proses otomatis, langsung masuk ke nomor tujuan.<br>Tersedia semua operator Indonesia.</p>
+    </div>
+  </div>
+
+  <!-- Notice (tampil jika layanan belum aktif) -->
+  <div class="notice-banner" id="noticeBanner" style="display:none;">
+    <span class="icon">⚠️</span>
+    <div>
+      <strong>Layanan sedang dalam persiapan.</strong> Kami sedang memverifikasi akun Digiflazz.
+      Untuk sementara, silakan hubungi admin langsung via WhatsApp untuk top-up.
+      <br><a href="https://wa.me/6281234567890" target="_blank" style="color:var(--purple);font-weight:700;">Chat Admin →</a>
+    </div>
+  </div>
+
+  <!-- Filter + Search -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-type="all">Semua</button>
+    <button class="filter-btn" data-type="pulsa">📶 Pulsa</button>
+    <button class="filter-btn" data-type="data">📡 Paket Data</button>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input type="text" id="searchInput" placeholder="Cari produk, operator..." />
+    </div>
+  </div>
+
+  <!-- Operator Chips -->
+  <div class="operator-row" id="operatorRow">
+    <!-- diisi JS -->
+  </div>
+
+  <!-- Product Grid -->
+  <div id="prodGrid" class="prod-grid"></div>
+  <div id="stateMsg" class="state-msg">
+    <div class="icon">⚡</div>
+    <div>Memuat produk digital...</div>
+  </div>
+
+</main>
+
+<!-- ─── MODAL TOP-UP ─── -->
+<div class="modal-overlay" id="topupModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+
+    <!-- Hasil transaksi -->
+    <div class="result-box" id="resultBox">
+      <div class="result-icon" id="resultIcon"></div>
+      <div class="result-title" id="resultTitle"></div>
+      <div class="result-detail" id="resultDetail"></div>
+    </div>
+
+    <!-- Form top-up -->
+    <div id="topupForm">
+      <div class="modal-title" id="modalTitle">Top-up Pulsa</div>
+      <div class="modal-product-name" id="modalProductName"></div>
+
+      <div class="modal-price-box">
+        <span class="lbl">Harga</span>
+        <span class="val" id="modalPrice">Rp 0</span>
+      </div>
+
+      <div class="form-group">
+        <label>Nomor HP Tujuan *</label>
+        <input type="tel" id="targetNumber" placeholder="Contoh: 0812-3456-7890" inputmode="numeric" />
+      </div>
+
+      <div class="form-group">
+        <label>Nama Kamu *</label>
+        <input type="text" id="custName" placeholder="Nama lengkap" />
+      </div>
+
+      <div class="form-group">
+        <label>Nomor WhatsApp Kamu *</label>
+        <input type="tel" id="custWA" placeholder="Contoh: 08123456789" inputmode="numeric" />
+      </div>
+
+      <div class="form-group">
+        <label>Catatan <small style="font-weight:400;color:var(--gray)">(opsional)</small></label>
+        <textarea id="custNotes" placeholder="Misal: tolong segera diproses"></textarea>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:0.76rem;color:#92400e;line-height:1.5;">
+        ⚠️ <strong>Pembayaran manual.</strong> Admin akan menghubungi kamu via WA untuk konfirmasi pembayaran sebelum top-up diproses.
+      </div>
+
+      <button class="btn-bayar" id="btnBayar">⚡ Pesan Top-up</button>
+      <button class="btn-cancel-modal" id="btnCancelModal">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TOAST ─── -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ─── State ───────────────────────────────────────────────────────
+  let allProducts  = [];
+  let activeType   = "all";
+  let activeOp     = "all";
+  let selectedProd = null;
+
+  // ─── DOM refs ────────────────────────────────────────────────────
+  const prodGrid    = document.getElementById("prodGrid");
+  const stateMsg    = document.getElementById("stateMsg");
+  const opRow       = document.getElementById("operatorRow");
+  const searchInput = document.getElementById("searchInput");
+  const topupModal  = document.getElementById("topupModal");
+  const topupForm   = document.getElementById("topupForm");
+  const resultBox   = document.getElementById("resultBox");
+
+  // ─── Format Rupiah ───────────────────────────────────────────────
+  function fmt(n) { return "Rp " + Number(n).toLocaleString("id-ID"); }
+
+  // ─── Toast ───────────────────────────────────────────────────────
+  function showToast(msg, dur = 2500) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), dur);
+  }
+
+  // ─── Ambil produk dari API ───────────────────────────────────────
+  async function loadProducts() {
+    stateMsg.style.display = "block";
+    stateMsg.innerHTML     = '<div class="icon">⚡</div><div>Memuat produk digital...</div>';
+    prodGrid.innerHTML     = "";
+
+    try {
+      const res = await fetch("/api/digiflazz-products?type=all");
+
+      if (res.status === 503) {
+        // Layanan belum dikonfigurasi
+        document.getElementById("noticeBanner").style.display = "flex";
+        stateMsg.innerHTML = '<div class="icon">🔧</div><div>Layanan sedang disiapkan.<br>Hubungi admin untuk top-up.</div>';
+        return;
+      }
+
+      const data = await res.json();
+      if (!Array.isArray(data) || data.length === 0) {
+        stateMsg.innerHTML = '<div class="icon">😅</div><div>Produk digital belum tersedia saat ini.</div>';
+        return;
+      }
+
+      allProducts = data;
+      stateMsg.style.display = "none";
+      buildOperators();
+      renderProducts();
+    } catch (err) {
+      stateMsg.innerHTML = '<div class="icon">❌</div><div>Gagal memuat produk. Coba refresh halaman.</div>';
+    }
+  }
+
+  // ─── Bangun chip operator ─────────────────────────────────────────
+  function buildOperators() {
+    const brands = ["all", ...new Set(allProducts.map(p => p.brand).filter(Boolean).sort())];
+    opRow.innerHTML = brands.map(b =>
+      `<button class="op-chip${b === "all" ? " active" : ""}" data-op="${b}">${b === "all" ? "Semua Operator" : b}</button>`
+    ).join("");
+    opRow.querySelectorAll(".op-chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        opRow.querySelectorAll(".op-chip").forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        activeOp = chip.dataset.op;
+        renderProducts();
+      });
+    });
+  }
+
+  // ─── Render grid produk ──────────────────────────────────────────
+  function renderProducts() {
+    const q = searchInput.value.trim().toLowerCase();
+
+    let items = allProducts.filter(p => {
+      if (activeType !== "all") {
+        if (activeType === "pulsa" && p.category !== "Pulsa") return false;
+        if (activeType === "data"  && p.category === "Pulsa")  return false;
+      }
+      if (activeOp !== "all" && p.brand !== activeOp) return false;
+      if (q) {
+        const haystack = (p.name + " " + p.brand + " " + p.desc).toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      return true;
+    });
+
+    // Sort by price ascending
+    items.sort((a, b) => a.price - b.price);
+
+    if (items.length === 0) {
+      prodGrid.innerHTML = "";
+      stateMsg.style.display = "block";
+      stateMsg.innerHTML = '<div class="icon">🔍</div><div>Produk tidak ditemukan.</div>';
+      return;
+    }
+
+    stateMsg.style.display = "none";
+    prodGrid.innerHTML = items.map(p => `
+      <div class="prod-card" data-sku="${p.sku}">
+        <div class="prod-card-header">
+          <span class="prod-brand">${p.brand || "—"}</span>
+          <span class="prod-cat">${p.category}</span>
+        </div>
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-price">${fmt(p.price)}</div>
+        <button class="btn-beli">⚡ Beli</button>
+      </div>
+    `).join("");
+
+    prodGrid.querySelectorAll(".prod-card").forEach(card => {
+      card.querySelector(".btn-beli").addEventListener("click", () => {
+        const sku  = card.dataset.sku;
+        const prod = items.find(p => p.sku === sku);
+        if (prod) openTopupModal(prod);
+      });
+    });
+  }
+
+  // ─── Filter type buttons ─────────────────────────────────────────
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeType = btn.dataset.type;
+      activeOp   = "all";
+      // Reset operator chips
+      if (opRow.querySelector(".op-chip")) {
+        opRow.querySelectorAll(".op-chip").forEach(c => c.classList.remove("active"));
+        const allChip = opRow.querySelector('[data-op="all"]');
+        if (allChip) allChip.classList.add("active");
+      }
+      renderProducts();
+    });
+  });
+
+  searchInput.addEventListener("input", renderProducts);
+
+  // ─── Modal top-up ─────────────────────────────────────────────────
+  function openTopupModal(prod) {
+    selectedProd = prod;
+    document.getElementById("modalTitle").textContent = prod.name;
+    document.getElementById("modalProductName").textContent = prod.brand + " · " + prod.category;
+    document.getElementById("modalPrice").textContent = fmt(prod.price);
+    // Reset form
+    document.getElementById("targetNumber").value = "";
+    document.getElementById("custName").value      = "";
+    document.getElementById("custWA").value        = "";
+    document.getElementById("custNotes").value     = "";
+    topupForm.style.display    = "block";
+    resultBox.style.display    = "none";
+    resultBox.className        = "result-box";
+    topupModal.classList.add("open");
+  }
+
+  document.getElementById("btnCancelModal").addEventListener("click", () => {
+    topupModal.classList.remove("open");
+  });
+
+  topupModal.addEventListener("click", e => {
+    if (e.target === topupModal) topupModal.classList.remove("open");
+  });
+
+  // ─── Submit top-up ────────────────────────────────────────────────
+  document.getElementById("btnBayar").addEventListener("click", async () => {
+    if (!selectedProd) return;
+
+    const targetNumber = document.getElementById("targetNumber").value.trim();
+    const custName     = document.getElementById("custName").value.trim();
+    const custWA       = document.getElementById("custWA").value.trim();
+    const notes        = document.getElementById("custNotes").value.trim();
+
+    if (!targetNumber) { showToast("Masukkan nomor HP tujuan."); return; }
+    if (!custName)     { showToast("Masukkan nama kamu."); return; }
+    if (!custWA)       { showToast("Masukkan nomor WhatsApp kamu."); return; }
+
+    const btn = document.getElementById("btnBayar");
+    btn.disabled    = true;
+    btn.textContent = "⏳ Memproses...";
+
+    try {
+      const res  = await fetch("/api/digiflazz-topup", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({
+          customerName: custName,
+          customerWA:   custWA,
+          targetNumber,
+          sku:          selectedProd.sku,
+          price:        selectedProd.price,
+          notes
+        })
+      });
+      const data = await res.json();
+
+      topupForm.style.display = "none";
+      resultBox.style.display = "block";
+
+      if (!res.ok || data.status === "failed") {
+        resultBox.className = "result-box failed";
+        document.getElementById("resultIcon").textContent   = "❌";
+        document.getElementById("resultTitle").textContent  = "Transaksi Gagal";
+        document.getElementById("resultDetail").textContent = data.message || data.error || "Terjadi kesalahan. Silakan hubungi admin.";
+      } else if (data.status === "pending") {
+        resultBox.className = "result-box pending";
+        document.getElementById("resultIcon").textContent   = "⏳";
+        document.getElementById("resultTitle").textContent  = "Pesanan Menunggu Konfirmasi";
+        document.getElementById("resultDetail").innerHTML   =
+          `Ref: <strong>${data.refId}</strong><br>Admin akan menghubungi kamu via WA <strong>${custWA}</strong> untuk konfirmasi pembayaran.`;
+      } else {
+        resultBox.className = "result-box success";
+        document.getElementById("resultIcon").textContent   = "✅";
+        document.getElementById("resultTitle").textContent  = "Top-up Berhasil!";
+        document.getElementById("resultDetail").innerHTML   =
+          `Nomor <strong>${targetNumber}</strong> berhasil di-top-up.<br>SN: ${data.sn || "-"}`;
+      }
+    } catch (err) {
+      topupForm.style.display = "none";
+      resultBox.style.display = "block";
+      resultBox.className     = "result-box failed";
+      document.getElementById("resultIcon").textContent   = "❌";
+      document.getElementById("resultTitle").textContent  = "Gagal Terhubung";
+      document.getElementById("resultDetail").textContent = "Periksa koneksi internet kamu dan coba lagi.";
+    } finally {
+      btn.disabled    = false;
+      btn.textContent = "⚡ Pesan Top-up";
+    }
+  });
+
+  // ─── Init ─────────────────────────────────────────────────────────
+  loadProducts();
+</script>
+</body>
+</html>
