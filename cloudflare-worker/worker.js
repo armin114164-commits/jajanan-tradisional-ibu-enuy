@@ -196,19 +196,29 @@ async function handleCekSaldo(req) {
 // ── Main ────────────────────────────────────────────────────────────────────
 export default {
   async fetch(request, env) {
-    const path = new URL(request.url).pathname;
+    const url    = new URL(request.url);
+    const path   = url.pathname;
+    const method = request.method;
 
-    if (request.method === "OPTIONS")
+    if (method === "OPTIONS")
       return new Response(null, { status: 204, headers: CORS_HEADERS });
 
-    if (request.method !== "POST")
-      return jsonRes({ error: "Method not allowed" }, 405);
+    // GET /ping — health check bisa dibuka langsung dari browser
+    if (method === "GET" && path === "/ping")
+      return jsonRes({ ok: true, worker: "proxy.enuyrasa.my.id", method, path });
+
+    // GET ke path lain — tampilkan debug info, bukan 405
+    if (method === "GET")
+      return jsonRes({ ok: false, hint: "Endpoint ini butuh POST request", method, path });
+
+    if (method !== "POST")
+      return jsonRes({ error: "Method not allowed", method, path }, 405);
 
     if (path === "/topup-pulsa") return handleTopupPulsa(request, env);
     if (path === "/transaction") return handleTransaction(request);
     if (path === "/price-list")  return handlePriceList(request);
     if (path === "/cek-saldo")   return handleCekSaldo(request);
 
-    return jsonRes({ error: "Endpoint tidak ditemukan", path }, 404);
+    return jsonRes({ error: "Endpoint tidak ditemukan", method, path }, 404);
   }
 };
