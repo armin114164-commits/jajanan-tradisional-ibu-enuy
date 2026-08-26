@@ -55,10 +55,16 @@ export default async function handler(req, res) {
   try {
     const sql = neon(process.env.DATABASE_URL);
 
-    // ── Kirim transaksi ke Digiflazz ──────────────────────────────
-    const digiRes  = await fetch("https://proxy.enuyrasa.my.id/transaction", {
+    // ── Kirim transaksi ke Digiflazz via PHP proxy ────────────────
+    const proxyUrl    = process.env.DIGIFLAZZ_PROXY_URL || "https://digiflazz.enuyrasa.my.id";
+    const proxySecret = process.env.PROXY_SECRET || "";
+    const proxyHeaders = {
+      "Content-Type": "application/json",
+      ...(proxySecret ? { "X-Proxy-Secret": proxySecret } : {}),
+    };
+    const digiRes  = await fetch(`${proxyUrl}/transaction`, {
       method:  "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: proxyHeaders,
       body:    JSON.stringify(txBody)
     });
     const digiData = await digiRes.json();

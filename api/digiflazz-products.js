@@ -48,9 +48,15 @@ export default async function handler(req, res) {
     .digest("hex");
 
   try {
-    const response = await fetch("https://proxy.enuyrasa.my.id/price-list", {
+    const proxyUrl    = process.env.DIGIFLAZZ_PROXY_URL || "https://digiflazz.enuyrasa.my.id";
+    const proxySecret = process.env.PROXY_SECRET || "";
+    const proxyHeaders = {
+      "Content-Type": "application/json",
+      ...(proxySecret ? { "X-Proxy-Secret": proxySecret } : {}),
+    };
+    const response = await fetch(`${proxyUrl}/price-list`, {
       method:  "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: proxyHeaders,
       body:    JSON.stringify({ cmd: "prepaid", username, sign })
     });
 

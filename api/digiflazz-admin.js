@@ -22,11 +22,18 @@ export default async function handler(req, res) {
   const cmd = req.query.cmd || "balance";
 
   try {
+    const proxyUrl    = process.env.DIGIFLAZZ_PROXY_URL || "https://digiflazz.enuyrasa.my.id";
+    const proxySecret = process.env.PROXY_SECRET || "";
+    const ph = {
+      "Content-Type": "application/json",
+      ...(proxySecret ? { "X-Proxy-Secret": proxySecret } : {}),
+    };
+
     // ── CEK SALDO ────────────────────────────────────────────────
     if (cmd === "balance") {
       const sign = crypto.createHash("md5").update(username + prodApiKey + "depo").digest("hex");
-      const r    = await fetch("https://proxy.enuyrasa.my.id/cek-saldo", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+      const r    = await fetch(`${proxyUrl}/cek-saldo`, {
+        method: "POST", headers: ph,
         body: JSON.stringify({ cmd: "deposit", username, sign })
       });
       const json = await r.json();
@@ -39,12 +46,12 @@ export default async function handler(req, res) {
       const sign     = crypto.createHash("md5").update(username + prodApiKey + refId).digest("hex");
       const signPl   = crypto.createHash("md5").update(username + prodApiKey + "pricelist").digest("hex");
       const [txRes, plRes] = await Promise.all([
-        fetch("https://proxy.enuyrasa.my.id/transaction", {
-          method: "POST", headers: { "Content-Type": "application/json" },
+        fetch(`${proxyUrl}/transaction`, {
+          method: "POST", headers: ph,
           body: JSON.stringify({ username, buyer_sku_code: "xld10", customer_no: "087800001232", ref_id: refId, sign, testing: true })
         }),
-        fetch("https://proxy.enuyrasa.my.id/price-list", {
-          method: "POST", headers: { "Content-Type": "application/json" },
+        fetch(`${proxyUrl}/price-list`, {
+          method: "POST", headers: ph,
           body: JSON.stringify({ cmd: "prepaid", username, sign: signPl })
         })
       ]);
